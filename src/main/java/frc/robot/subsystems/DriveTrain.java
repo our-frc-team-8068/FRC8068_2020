@@ -31,6 +31,8 @@ public class DriveTrain extends SubsystemBase {
   private final WPI_VictorSPX rightDriveVictorSPX;
 
   private final Joystick driverJoystick;
+
+  private boolean driveTrainInvertDirection = false;
   
   public DriveTrain(WPI_TalonSRX leftDriveTalonSRX, WPI_TalonSRX rightDriveTalonSRX,
       WPI_VictorSPX leftDriveVictorSPX, WPI_VictorSPX rightDriveVictorSPX, Joystick driverJoystick ) {
@@ -60,5 +62,13 @@ public class DriveTrain extends SubsystemBase {
     leftDriveTalonSRX.set(leftSideSpeed);
     rightDriveTalonSRX.set(rightSideSpeed);
 
+  }
+
+  public void driveTrainInvertDirection(){
+    driveTrainInvertDirection = !driveTrainInvertDirection;
+  }
+
+  public boolean getDriveTrainInvertDirection(){
+    return driveTrainInvertDirection;
   }
 }

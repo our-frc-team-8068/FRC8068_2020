@@ -8,22 +8,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ControlPanel;
 import frc.robot.subsystems.DriveTrain;
 
-public class CmdControlPanelRotateToColor extends CommandBase {
+public class CmdDriveTrainInvertDirection extends CommandBase {
   /**
-   * Creates a new CmdControlPanelRotateToColor.
+   * Creates a new CmdDriveTrainInvertDirection.
    */
-  private final ControlPanel controlPanel;
   private final DriveTrain driveTrain;
 
-  public CmdControlPanelRotateToColor(ControlPanel controlPanel, DriveTrain driveTrain) {
+  public CmdDriveTrainInvertDirection(DriveTrain driveTrain) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.controlPanel = controlPanel;
     this.driveTrain = driveTrain;
-
-    addRequirements(controlPanel, driveTrain);
   }
 
   // Called when the command is initially scheduled.
@@ -34,6 +29,8 @@ public class CmdControlPanelRotateToColor extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    driveTrain.driveTrainInvertDirection(); 
+    System.out.println(driveTrain.getDriveTrainInvertDirection());
   }
 
   // Called once the command ends or is interrupted.
@@ -44,6 +41,6 @@ public class CmdControlPanelRotateToColor extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }
