@@ -82,7 +82,7 @@ public class RobotContainer {
   private final Arm arm = new Arm(rotationVictorSPX, leftWinchVictorSPX, rightWinchVictorSPX, shimmyVictorSPX, driverJoystick, operatorJoystick);
   private final Collector collector = new Collector(collectorVictorSPX, driverJoystick, operatorJoystick);
   private final DriveTrain driveTrain = new DriveTrain(leftDriveTalonSRX, rightDriveTalonSRX, leftDriveVictorSPX, rightDriveVictorSPX, driverJoystick);
-  private final Magazine magazine = new Magazine(magazineVictorSPX, magazinePositionEncoder, magazineHomePositionColorSensor);
+  private final Magazine magazine = new Magazine(magazineVictorSPX, magazinePositionEncoder, magazineHomePositionColorSensor, driverJoystick);
   private final Shooter shooter = new Shooter(preigniterVictorSPX, topShooterTalonSRX, bottomShooterTalonSRX, driverJoystick);
 
   private final ExampleCommand autoCommand = new ExampleCommand(exampleSubsystem);
@@ -117,11 +117,9 @@ public class RobotContainer {
   private void configureButtonBindings() {
     final JoystickButton collectorCollectButton = new JoystickButton(driverJoystick, 
       LogitechGamePad.LEFT_BUMPER);
-
-    collectorCollectButton.whileHeld(new CmdCollectorCollect(magazine, collector));
-
     final JoystickButton invertDriveButton = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_Y);
 
+    collectorCollectButton.whileHeld(new CmdCollectorCollect(magazine, collector));
     invertDriveButton.whenPressed(new CmdDriveTrainInvertDirection(driveTrain));
 
   }

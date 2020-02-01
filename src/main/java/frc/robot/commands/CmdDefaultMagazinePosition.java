@@ -24,7 +24,7 @@ public class CmdDefaultMagazinePosition extends PIDCommand {
   public CmdDefaultMagazinePosition(Magazine magazine) {
     super(
       // The controller that the command will use
-      new PIDController(0.001, 0, 0),
+      new PIDController(0.00077, 0, 0.00003),
       // This should return the measurement
       () -> magazine.getMagazineEncoderValue(),
       // This should return the setpoint (can also be a constant)
