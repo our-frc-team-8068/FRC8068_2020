@@ -8,22 +8,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Collector;
-import frc.robot.subsystems.Magazine;
+import frc.robot.subsystems.DriveTrain;
 
-public class CmdCollectorCollect extends CommandBase {
+public class CmdDriveTrainInvertDirection extends CommandBase {
   /**
-   * Creates a new CmdCollectorCollect.
+   * Creates a new CmdDriveTrainInvertDirection.
    */
-  private final Magazine magazine;
-  private final Collector collector;
+  private final DriveTrain driveTrain;
 
-  public CmdCollectorCollect(Magazine magazine, Collector collector) {
+  public CmdDriveTrainInvertDirection(DriveTrain driveTrain) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.magazine = magazine;
-    this.collector = collector;
-    
-    addRequirements(magazine, collector);
+    this.driveTrain = driveTrain;
   }
 
   // Called when the command is initially scheduled.
@@ -34,7 +29,8 @@ public class CmdCollectorCollect extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("I'm the collector and I suck");
+    driveTrain.driveTrainInvertDirection(); 
+    System.out.println(driveTrain.getDriveTrainInvertDirection());
   }
 
   // Called once the command ends or is interrupted.
@@ -45,6 +41,6 @@ public class CmdCollectorCollect extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

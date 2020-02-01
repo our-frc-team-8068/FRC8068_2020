@@ -17,14 +17,16 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.CmdCollectorCollect;
 import frc.robot.commands.CmdDefaultCollector;
 import frc.robot.commands.CmdDefaultJoystickDrive;
 import frc.robot.commands.CmdDefaultMagazinePosition;
 import frc.robot.commands.CmdDefaultShoot;
+import frc.robot.commands.CmdDriveTrainInvertDirection;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Collector;
-import frc.robot.subsystems.ControlPanel;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Magazine;
@@ -79,7 +81,6 @@ public class RobotContainer {
   private final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
   private final Arm arm = new Arm(rotationVictorSPX, leftWinchVictorSPX, rightWinchVictorSPX, shimmyVictorSPX, driverJoystick, operatorJoystick);
   private final Collector collector = new Collector(collectorVictorSPX, driverJoystick, operatorJoystick);
-  private final ControlPanel controlPanel = new ControlPanel(controlPanelVictorSPX, controlPanelColorSensor, operatorJoystick);
   private final DriveTrain driveTrain = new DriveTrain(leftDriveTalonSRX, rightDriveTalonSRX, leftDriveVictorSPX, rightDriveVictorSPX, driverJoystick);
   private final Magazine magazine = new Magazine(magazineVictorSPX, magazinePositionEncoder, magazineHomePositionColorSensor);
   private final Shooter shooter = new Shooter(preigniterVictorSPX, topShooterTalonSRX, bottomShooterTalonSRX, driverJoystick);
@@ -114,6 +115,15 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    final JoystickButton collectorCollectButton = new JoystickButton(driverJoystick, 
+      LogitechGamePad.LEFT_BUMPER);
+
+    collectorCollectButton.whileHeld(new CmdCollectorCollect(magazine, collector));
+
+    final JoystickButton invertDriveButton = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_Y);
+
+    invertDriveButton.whenPressed(new CmdDriveTrainInvertDirection(driveTrain));
+
   }
 
 
