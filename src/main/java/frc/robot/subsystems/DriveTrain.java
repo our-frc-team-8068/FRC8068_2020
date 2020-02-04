@@ -45,9 +45,10 @@ public class DriveTrain extends SubsystemBase {
     rightDriveVictorSPX.setNeutralMode(NeutralMode.Brake);
     rightDriveVictorSPX.setInverted(true);
 
-    rightDriveVictorSPX.setInverted(true);
     rightDriveVictorSPX.setNeutralMode(NeutralMode.Brake);
-    rightDriveVictorSPX.set(ControlMode.Follower, rightDriveTalonSRX.getDeviceID()); 
+    //rightDriveVictorSPX.set(ControlMode.Follower, rightDriveTalonSRX.getDeviceID());
+    rightDriveVictorSPX.setInverted(true);
+ 
 
     leftDriveTalonSRX.set(ControlMode.PercentOutput, 0);
     leftDriveTalonSRX.setInverted(false);
@@ -56,6 +57,7 @@ public class DriveTrain extends SubsystemBase {
     //leftDriveVictorSPX.set(ControlMode.Follower, leftDriveTalonSRX.getDeviceID());
     leftDriveVictorSPX.setNeutralMode(NeutralMode.Brake);
     leftDriveVictorSPX.setInverted(false);
+
 
   }
 
