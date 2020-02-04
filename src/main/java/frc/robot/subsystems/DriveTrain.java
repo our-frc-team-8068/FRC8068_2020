@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LogitechGamePad;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -43,24 +44,33 @@ public class DriveTrain extends SubsystemBase {
   this.driverJoystick = driverJoystick;
 
     rightDriveTalonSRX.set(ControlMode.PercentOutput, 0);
-    rightDriveTalonSRX.setInverted(false);
+    rightDriveTalonSRX.setInverted(true);
+    rightDriveTalonSRX.setNeutralMode(NeutralMode.Brake);
+
+    rightDriveVictorSPX.setInverted(true);
+    rightDriveVictorSPX.setNeutralMode(NeutralMode.Brake);
+    rightDriveVictorSPX.set(ControlMode.Follower, rightDriveTalonSRX.getDeviceID()); 
 
     leftDriveTalonSRX.set(ControlMode.PercentOutput, 0);
-    leftDriveTalonSRX.setInverted(true);
-
+    leftDriveTalonSRX.setInverted(false);
+    leftDriveTalonSRX.setNeutralMode(NeutralMode.Brake);
+    
+    leftDriveVictorSPX.setInverted(false);
+    leftDriveVictorSPX.setNeutralMode(NeutralMode.Brake);
+    leftDriveVictorSPX.set(ControlMode.Follower, leftDriveTalonSRX.getDeviceID());
 
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
     
   }
-
+  
   public void setDriveTrainSpeeds(double leftSideSpeed, double rightSideSpeed) {
     leftDriveTalonSRX.set(leftSideSpeed);
     rightDriveTalonSRX.set(rightSideSpeed);
+    System.out.println("Left Side Speed " + leftSideSpeed + "Right Side Speed " + rightSideSpeed);
 
   }
 
