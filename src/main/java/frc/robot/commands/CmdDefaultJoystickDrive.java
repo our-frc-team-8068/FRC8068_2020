@@ -50,10 +50,6 @@ public class CmdDefaultJoystickDrive extends CommandBase {
     double rightXAxisMagnitude = Utilities.analogScaling(deadband, 1.0, 0.0, 1.0, true,
         Math.abs(driverJoystick.getRawAxis(LogitechGamePad.RIGHT_X_AXIS)));
 
-    double joystickAngle = Math.atan(leftYAxisMagnitude / rightXAxisMagnitude);
-
-    //System.out.println("Joystick Angle: " + Math.toDegrees(joystickAngle));
-        //System.out.println("Left Y " + leftYAxisMagnitude + "Right X " + rightXAxisMagnitude);
     if (leftYAxisMagnitude > 0 && rightXAxisMagnitude > 0) 
     {
       // Checks if both the Left Y Axis and Right X Axis are greater than 0.
