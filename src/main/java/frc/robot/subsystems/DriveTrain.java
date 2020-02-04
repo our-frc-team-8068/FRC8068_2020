@@ -47,29 +47,33 @@ public class DriveTrain extends SubsystemBase {
     rightDriveTalonSRX.setInverted(true);
     rightDriveTalonSRX.setNeutralMode(NeutralMode.Brake);
 
-    rightDriveVictorSPX.setInverted(true);
     rightDriveVictorSPX.setNeutralMode(NeutralMode.Brake);
-    rightDriveVictorSPX.set(ControlMode.Follower, rightDriveTalonSRX.getDeviceID()); 
+    //rightDriveVictorSPX.set(ControlMode.Follower, rightDriveTalonSRX.getDeviceID());
+    rightDriveVictorSPX.setInverted(true);
+ 
 
     leftDriveTalonSRX.set(ControlMode.PercentOutput, 0);
     leftDriveTalonSRX.setInverted(false);
     leftDriveTalonSRX.setNeutralMode(NeutralMode.Brake);
     
-    leftDriveVictorSPX.setInverted(false);
     leftDriveVictorSPX.setNeutralMode(NeutralMode.Brake);
-    leftDriveVictorSPX.set(ControlMode.Follower, leftDriveTalonSRX.getDeviceID());
+    //leftDriveVictorSPX.set(ControlMode.Follower, leftDriveTalonSRX.getDeviceID());
+    leftDriveVictorSPX.setInverted(false);
+
 
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    
+
   }
   
   public void setDriveTrainSpeeds(double leftSideSpeed, double rightSideSpeed) {
     leftDriveTalonSRX.set(leftSideSpeed);
     rightDriveTalonSRX.set(rightSideSpeed);
+    leftDriveVictorSPX.set(leftSideSpeed);
+    rightDriveVictorSPX.set(rightSideSpeed);
     System.out.println("Left Side Speed " + leftSideSpeed + "Right Side Speed " + rightSideSpeed);
 
   }
