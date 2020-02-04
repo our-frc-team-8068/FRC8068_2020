@@ -50,6 +50,9 @@ public class CmdDefaultJoystickDrive extends CommandBase {
     double rightXAxisMagnitude = Utilities.analogScaling(deadband, 1.0, 0.0, 1.0, true,
         Math.abs(driverJoystick.getRawAxis(LogitechGamePad.RIGHT_X_AXIS)));
 
+    double joystickAngle =  Math.toDegrees(Math.atan(leftYAxisMagnitude / rightXAxisMagnitude));
+
+
         System.out.println("Left Y " + leftYAxisMagnitude + "Right X " + rightXAxisMagnitude);
     if (leftYAxisMagnitude > 0 && rightXAxisMagnitude > 0) 
     {
@@ -64,14 +67,14 @@ public class CmdDefaultJoystickDrive extends CommandBase {
           // If code proceds here than the value is in quadrent I
           // Will want a positive Y,X Magnitude value.
           System.out.println("You have entered Quadrent I");
-          driveTrain.setDriveTrainSpeeds(leftYAxisMagnitude, leftYAxisMagnitude - rightXAxisMagnitude);
+          driveTrain.setDriveTrainSpeeds(-leftYAxisMagnitude, (-leftYAxisMagnitude * Math.toDegrees(Math.sin(joystickAngle))));
         } 
         else 
         {
           // If code proceds here than the value is in quadret II
           // Will want a positive X,Y Magnitude value.
           System.out.println("You have entered Quadrent II");
-          driveTrain.setDriveTrainSpeeds(leftYAxisMagnitude - rightXAxisMagnitude, leftYAxisMagnitude);
+          driveTrain.setDriveTrainSpeeds((-leftYAxisMagnitude * Math.toDegrees(Math.sin(joystickAngle))), -leftYAxisMagnitude);
 
         }
 
