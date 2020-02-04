@@ -62,10 +62,10 @@ public class RobotContainer {
   private final ColorSensorV3 controlPanelColorSensor = new ColorSensorV3(controlPanelColorSensorI2CPort);
 
   //Drivetrain Subsystem
-  private final WPI_TalonSRX leftDriveTalonSRX = new WPI_TalonSRX(11);
-  private final WPI_TalonSRX rightDriveTalonSRX = new WPI_TalonSRX(10);
-  private final WPI_VictorSPX leftDriveVictorSPX = new WPI_VictorSPX(13);
-  private final WPI_VictorSPX rightDriveVictorSPX = new WPI_VictorSPX(12);
+  private final WPI_TalonSRX leftDriveTalonSRX = new WPI_TalonSRX(10);
+  private final WPI_TalonSRX rightDriveTalonSRX = new WPI_TalonSRX(11);
+  private final WPI_VictorSPX leftDriveVictorSPX = new WPI_VictorSPX(12);
+  private final WPI_VictorSPX rightDriveVictorSPX = new WPI_VictorSPX(13);
 
   //Magazine Subsystem
   private final WPI_VictorSPX magazineVictorSPX = new WPI_VictorSPX(50);

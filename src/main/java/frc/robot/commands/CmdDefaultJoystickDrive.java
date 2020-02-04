@@ -50,6 +50,7 @@ public class CmdDefaultJoystickDrive extends CommandBase {
     double rightXAxisMagnitude = Utilities.analogScaling(deadband, 1.0, 0.0, 1.0, true,
         Math.abs(driverJoystick.getRawAxis(LogitechGamePad.RIGHT_X_AXIS)));
 
+        System.out.println("Left Y " + leftYAxisMagnitude + "Right X " + rightXAxisMagnitude);
     if (leftYAxisMagnitude > 0 && rightXAxisMagnitude > 0) 
     {
       // Checks if both the Left Y Axis and Right X Axis are greater than 0.
@@ -63,12 +64,15 @@ public class CmdDefaultJoystickDrive extends CommandBase {
           // If code proceds here than the value is in quadrent I
           // Will want a positive Y,X Magnitude value.
           System.out.println("You have entered Quadrent I");
+          driveTrain.setDriveTrainSpeeds(leftYAxisMagnitude, leftYAxisMagnitude - rightXAxisMagnitude);
         } 
         else 
         {
           // If code proceds here than the value is in quadret II
           // Will want a positive X,Y Magnitude value.
           System.out.println("You have entered Quadrent II");
+          driveTrain.setDriveTrainSpeeds(leftYAxisMagnitude - rightXAxisMagnitude, leftYAxisMagnitude);
+
         }
 
       } else if (driverJoystick.getRawAxis(LogitechGamePad.LEFT_Y_AXIS) > 0) {
@@ -78,10 +82,12 @@ public class CmdDefaultJoystickDrive extends CommandBase {
           // If code proceds here than the value is in quadrent IV.
           // Will want a negitive Y,X Magnitude value
           System.out.println("You have entered Quadrent IV");
+          driveTrain.setDriveTrainSpeeds(-leftYAxisMagnitude + rightXAxisMagnitude, -rightXAxisMagnitude);
         } else {
           // If code proceds here than the value is in quadrent III.
           // Will want a negitive X,Y Magnitude value.
           System.out.println("You have entered Quadrent III");
+          driveTrain.setDriveTrainSpeeds(-rightXAxisMagnitude, -leftYAxisMagnitude + rightXAxisMagnitude);
         }
       }
     } else if (leftYAxisMagnitude == 0 && rightXAxisMagnitude != 0) {
@@ -92,10 +98,12 @@ public class CmdDefaultJoystickDrive extends CommandBase {
         // Probably want to grab the scaled input and apply it to the proper motors to
         // turn the robot left.
         System.out.println("Robot Turning Left");
+        driveTrain.setDriveTrainSpeeds(-rightXAxisMagnitude, rightXAxisMagnitude);
       } else if (driverJoystick.getRawAxis(LogitechGamePad.RIGHT_X_AXIS) > 0) {
         // We know that we want to turn the robot right.
         // Want to grab the scaled input to appy motor power to go right.
         System.out.println("Robot Turning Right");
+        driveTrain.setDriveTrainSpeeds(rightXAxisMagnitude, -rightXAxisMagnitude);
       }
     } else if (rightXAxisMagnitude == 0 && leftYAxisMagnitude != 0) {
       // Checks if there is no input on Right Joystick x axis
@@ -105,14 +113,17 @@ public class CmdDefaultJoystickDrive extends CommandBase {
         // here.
         // Want to grab scaled vaules to set motors direction forward.
         System.out.println("Robot Moving Forward");
+        driveTrain.setDriveTrainSpeeds(leftYAxisMagnitude, leftYAxisMagnitude);
       } else if (driverJoystick.getRawAxis(LogitechGamePad.LEFT_Y_AXIS) > 0) {
         // We know robot needs to drive backwards.
         // Want to grab scaled values to set motors direction backward.
         System.out.println("Robot Moving Backward");
+        driveTrain.setDriveTrainSpeeds(-leftYAxisMagnitude, -leftYAxisMagnitude);
       }
     } else {
       // Value is set to 0,0.
       System.out.println("You are at 0,0");
+      driveTrain.setDriveTrainSpeeds(0.0, 0.0);
     }
   }
 
