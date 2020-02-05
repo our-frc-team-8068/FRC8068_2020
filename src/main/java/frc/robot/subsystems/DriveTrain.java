@@ -46,19 +46,18 @@ public class DriveTrain extends SubsystemBase {
     rightDriveTalonSRX.set(ControlMode.PercentOutput, 0);
     rightDriveTalonSRX.setInverted(true);
     rightDriveTalonSRX.setNeutralMode(NeutralMode.Brake);
-
+    
+    //rightDriveVictorSPX.set(ControlMode.Follower, rightDriveTalonSRX.getDeviceID());
     rightDriveVictorSPX.setNeutralMode(NeutralMode.Brake);
     rightDriveVictorSPX.setInverted(true);
-    //rightDriveVictorSPX.set(ControlMode.Follower, rightDriveTalonSRX.getDeviceID());
- 
 
     leftDriveTalonSRX.set(ControlMode.PercentOutput, 0);
     leftDriveTalonSRX.setInverted(false);
     leftDriveTalonSRX.setNeutralMode(NeutralMode.Brake);
     
+    //leftDriveVictorSPX.set(ControlMode.Follower, leftDriveTalonSRX.getDeviceID());
     leftDriveVictorSPX.setNeutralMode(NeutralMode.Brake);
     leftDriveVictorSPX.setInverted(false);
-    //leftDriveVictorSPX.set(ControlMode.Follower, leftDriveTalonSRX.getDeviceID());
 
 
   }
@@ -74,8 +73,7 @@ public class DriveTrain extends SubsystemBase {
     rightDriveTalonSRX.set(rightSideSpeed);
     leftDriveVictorSPX.set(leftSideSpeed);
     rightDriveVictorSPX.set(rightSideSpeed);
-    System.out.println("Left Side Speed " + leftSideSpeed + "Right Side Speed " + rightSideSpeed);
-
+  
   }
 
   public void driveTrainInvertDirection(){
