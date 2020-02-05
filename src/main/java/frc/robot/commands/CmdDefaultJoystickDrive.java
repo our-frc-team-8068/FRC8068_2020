@@ -52,8 +52,8 @@ public class CmdDefaultJoystickDrive extends CommandBase {
 
     double joystickAngle = Math.atan(leftYAxisMagnitude / rightXAxisMagnitude);
 
-
-        System.out.println("Left Y " + leftYAxisMagnitude + "Right X " + rightXAxisMagnitude);
+    System.out.println("Joystick Angle: " + Math.toDegrees(joystickAngle));
+        //System.out.println("Left Y " + leftYAxisMagnitude + "Right X " + rightXAxisMagnitude);
     if (leftYAxisMagnitude > 0 && rightXAxisMagnitude > 0) 
     {
       // Checks if both the Left Y Axis and Right X Axis are greater than 0.
@@ -66,15 +66,15 @@ public class CmdDefaultJoystickDrive extends CommandBase {
         {
           // If code proceds here than the value is in quadrent I
           // Will want a positive Y,X Magnitude value.
-          System.out.println("You have entered Quadrent I");
-          driveTrain.setDriveTrainSpeeds(-leftYAxisMagnitude, (-leftYAxisMagnitude * Math.toDegrees(Math.sin(joystickAngle))));
+          System.out.println("You have entered Quadrent I " + Math.sin(joystickAngle));
+          driveTrain.setDriveTrainSpeeds(leftYAxisMagnitude, leftYAxisMagnitude * Math.sin(joystickAngle));
         } 
         else 
         {
           // If code proceds here than the value is in quadret II
           // Will want a positive X,Y Magnitude value.
-          System.out.println("You have entered Quadrent II");
-          driveTrain.setDriveTrainSpeeds((-leftYAxisMagnitude * Math.toDegrees(Math.sin(joystickAngle))), -leftYAxisMagnitude);
+          System.out.println("You have entered Quadrent II " + Math.sin(joystickAngle));
+          driveTrain.setDriveTrainSpeeds(leftYAxisMagnitude * Math.sin(joystickAngle), leftYAxisMagnitude);
 
         }
 
