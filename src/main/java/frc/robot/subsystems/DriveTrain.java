@@ -70,10 +70,10 @@ public class DriveTrain extends SubsystemBase {
   }
   
   public void setDriveTrainSpeeds(double leftSideSpeed, double rightSideSpeed) {
-    //leftDriveTalonSRX.set(leftSideSpeed);
-    //rightDriveTalonSRX.set(rightSideSpeed);
-    //leftDriveVictorSPX.set(leftSideSpeed);
-    //rightDriveVictorSPX.set(rightSideSpeed);
+    leftDriveTalonSRX.set(leftSideSpeed);
+    rightDriveTalonSRX.set(rightSideSpeed);
+    leftDriveVictorSPX.set(leftSideSpeed);
+    rightDriveVictorSPX.set(rightSideSpeed);
     System.out.println("Left Side Speed " + leftSideSpeed + "Right Side Speed " + rightSideSpeed);
 
   }
