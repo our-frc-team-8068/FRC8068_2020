@@ -52,7 +52,7 @@ public class CmdDefaultJoystickDrive extends CommandBase {
 
     double joystickAngle = Math.atan(leftYAxisMagnitude / rightXAxisMagnitude);
 
-    System.out.println("Joystick Angle: " + Math.toDegrees(joystickAngle));
+    //System.out.println("Joystick Angle: " + Math.toDegrees(joystickAngle));
         //System.out.println("Left Y " + leftYAxisMagnitude + "Right X " + rightXAxisMagnitude);
     if (leftYAxisMagnitude > 0 && rightXAxisMagnitude > 0) 
     {
@@ -99,12 +99,26 @@ public class CmdDefaultJoystickDrive extends CommandBase {
           // If code proceds here than the value is in quadrent IV.
           // Will want a negitive Y,X Magnitude value
           System.out.println("You have entered Quadrent IV");
-          driveTrain.setDriveTrainSpeeds(-leftYAxisMagnitude + rightXAxisMagnitude, -rightXAxisMagnitude);
+          if(-leftYAxisMagnitude + rightXAxisMagnitude > 0)
+          {
+            driveTrain.setDriveTrainSpeeds(0, -rightXAxisMagnitude);
+          }
+          else
+          {
+            driveTrain.setDriveTrainSpeeds(-leftYAxisMagnitude + rightXAxisMagnitude, -rightXAxisMagnitude);  
+          }
         } else {
           // If code proceds here than the value is in quadrent III.
           // Will want a negitive X,Y Magnitude value.
           System.out.println("You have entered Quadrent III");
-          driveTrain.setDriveTrainSpeeds(-rightXAxisMagnitude, -leftYAxisMagnitude + rightXAxisMagnitude);
+          if(-leftYAxisMagnitude + rightXAxisMagnitude > 0)
+          {
+            driveTrain.setDriveTrainSpeeds(-rightXAxisMagnitude, 0);
+          }
+          else
+          {
+            driveTrain.setDriveTrainSpeeds(-rightXAxisMagnitude, -leftYAxisMagnitude + rightXAxisMagnitude);
+          }
         }
       }
     } else if (leftYAxisMagnitude == 0 && rightXAxisMagnitude != 0) {
