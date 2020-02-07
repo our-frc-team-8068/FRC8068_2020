@@ -19,14 +19,11 @@ public class Shooter extends SubsystemBase {
    */
   private final Joystick driverJoystick;
 
-  private final WPI_VictorSPX preigniterVictorSPX;
-  private final WPI_TalonSRX topShooterTalonSRX;
-  private final WPI_TalonSRX bottomShooterTalonSRX;
+  private final WPI_VictorSPX preigniterVictorSPX = new WPI_VictorSPX(20);
+  private final WPI_TalonSRX topShooterTalonSRX = new WPI_TalonSRX(21);
+  private final WPI_TalonSRX bottomShooterTalonSRX = new WPI_TalonSRX(22);
   
-  public Shooter(WPI_VictorSPX preigniterVictorSPX, WPI_TalonSRX topShooterTalonSRX, WPI_TalonSRX bottomShooterTalonSRX, Joystick driverJoystick) {
-    this.preigniterVictorSPX = preigniterVictorSPX;
-    this.topShooterTalonSRX = topShooterTalonSRX;
-    this.bottomShooterTalonSRX = bottomShooterTalonSRX;
+  public Shooter(Joystick driverJoystick) {
     this.driverJoystick = driverJoystick;
 
   }

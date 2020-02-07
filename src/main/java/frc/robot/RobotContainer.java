@@ -44,47 +44,19 @@ public class RobotContainer {
 
   //JoySticks
   private final Joystick driverJoystick = new Joystick(0);
-  private final Joystick operatorJoystick = new Joystick(1);
-
-  //Example Subsystem
-  private final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
-
-  //Arm Subsystem
-  private final WPI_VictorSPX rotationVictorSPX = new WPI_VictorSPX(30);
-  private final WPI_VictorSPX leftWinchVictorSPX = new WPI_VictorSPX(31);
-  private final WPI_VictorSPX rightWinchVictorSPX= new WPI_VictorSPX(32);
-  private final WPI_VictorSPX shimmyVictorSPX = new WPI_VictorSPX(33);
-  private final Encoder armPositionEncoder = new Encoder(2,3);
-  private final ADIS16470_IMU robotImu = new ADIS16470_IMU();
-
-  //Collector Subsystem
-  private final WPI_VictorSPX collectorVictorSPX = new WPI_VictorSPX(45);
-
-  //ControlPanel Subsystem
-  private final WPI_VictorSPX controlPanelVictorSPX = new WPI_VictorSPX(40);
-  private final I2C.Port controlPanelColorSensorI2CPort = I2C.Port.kOnboard;
-  private final ColorSensorV3 controlPanelColorSensor = new ColorSensorV3(controlPanelColorSensorI2CPort);
-
-  //Drivetrain Subsystem
-  private final WPI_TalonSRX leftDriveTalonSRX = new WPI_TalonSRX(10);
-  private final WPI_TalonSRX rightDriveTalonSRX = new WPI_TalonSRX(11);
-  private final WPI_VictorSPX leftDriveVictorSPX = new WPI_VictorSPX(12);
-  private final WPI_VictorSPX rightDriveVictorSPX = new WPI_VictorSPX(13);
+  private final Joystick operatorJoystick = new Joystick(1); 
 
   //Magazine Subsystem
+  
+  //Subsystems
+  private final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
+  private final Arm arm = new Arm(driverJoystick, operatorJoystick);
+  private final Collector collector = new Collector(driverJoystick, operatorJoystick);
+  private final DriveTrain driveTrain = new DriveTrain(driverJoystick);
+  private final Magazine magazine = new Magazine(magazineVictorSPX, magazinePositionEncoder, magazineHomePositionColorSensor);
+  private final Shooter shooter = new Shooter(driverJoystick);
 
-
-  //Shooter Subsystem
-  private final WPI_VictorSPX preigniterVictorSPX = new WPI_VictorSPX(20);
-  private final WPI_TalonSRX topShooterTalonSRX = new WPI_TalonSRX(21);
-  private final WPI_TalonSRX bottomShooterTalonSRX = new WPI_TalonSRX(22);
-
-  private final Arm arm = new Arm(rotationVictorSPX, leftWinchVictorSPX, rightWinchVictorSPX, shimmyVictorSPX, driverJoystick, operatorJoystick);
-  private final Collector collector = new Collector(collectorVictorSPX, driverJoystick, operatorJoystick);
-  private final DriveTrain driveTrain = new DriveTrain(leftDriveTalonSRX, rightDriveTalonSRX, leftDriveVictorSPX, rightDriveVictorSPX, driverJoystick);
-  private final Magazine magazine = new Magazine(driverJoystick);
-  private final Shooter shooter = new Shooter(preigniterVictorSPX, topShooterTalonSRX, bottomShooterTalonSRX, driverJoystick);
-
+  //Commands
   private final ExampleCommand autoCommand = new ExampleCommand(exampleSubsystem);
   private final CmdDefaultJoystickDrive cmdDefaultJoystickDrive = new CmdDefaultJoystickDrive(driverJoystick, driveTrain);
   private final CmdDefaultMagazinePosition cmdDefaultMagazinePosition = new CmdDefaultMagazinePosition(magazine);

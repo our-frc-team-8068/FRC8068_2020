@@ -25,22 +25,16 @@ public class DriveTrain extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-  private final WPI_TalonSRX leftDriveTalonSRX;
-  private final WPI_TalonSRX rightDriveTalonSRX;
-
-  private final WPI_VictorSPX leftDriveVictorSPX;
-  private final WPI_VictorSPX rightDriveVictorSPX;
+  private final WPI_TalonSRX leftDriveTalonSRX = new WPI_TalonSRX(10);
+  private final WPI_TalonSRX rightDriveTalonSRX = new WPI_TalonSRX(11);
+  private final WPI_VictorSPX leftDriveVictorSPX = new WPI_VictorSPX(12);
+  private final WPI_VictorSPX rightDriveVictorSPX = new WPI_VictorSPX(13);
 
   private final Joystick driverJoystick;
 
   private boolean driveTrainInvertDirection = false;
   
-  public DriveTrain(WPI_TalonSRX leftDriveTalonSRX, WPI_TalonSRX rightDriveTalonSRX,
-      WPI_VictorSPX leftDriveVictorSPX, WPI_VictorSPX rightDriveVictorSPX, Joystick driverJoystick ) {
-  this.leftDriveTalonSRX = leftDriveTalonSRX;
-  this.rightDriveTalonSRX = rightDriveTalonSRX;
-  this.leftDriveVictorSPX = leftDriveVictorSPX;
-  this.rightDriveVictorSPX = rightDriveVictorSPX;
+  public DriveTrain(Joystick driverJoystick ) {
   this.driverJoystick = driverJoystick;
 
     rightDriveTalonSRX.set(ControlMode.PercentOutput, 0);

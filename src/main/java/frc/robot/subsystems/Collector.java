@@ -20,10 +20,9 @@ public class Collector extends SubsystemBase {
   private final Joystick driverJoystick;
   private final Joystick operatorJoystick;
   
-  private final WPI_VictorSPX collectorVictorSPX;
+  private final WPI_VictorSPX collectorVictorSPX = new WPI_VictorSPX(45);
 
-  public Collector(WPI_VictorSPX collectorVictorSPX, Joystick driverJoystick, Joystick operatorJoystick) {
-    this.collectorVictorSPX = collectorVictorSPX;
+  public Collector(Joystick driverJoystick, Joystick operatorJoystick) {
     this.driverJoystick = driverJoystick;
     this.operatorJoystick = operatorJoystick;
   }

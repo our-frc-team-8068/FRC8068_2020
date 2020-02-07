@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorSensorV3;
 
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,9 +22,10 @@ public class ControlPanel extends SubsystemBase {
    */
   private final Joystick operatorJoystick;
 
-  private final WPI_VictorSPX controlPanelVictorSPX;
+  private final WPI_VictorSPX controlPanelVictorSPX = new WPI_VictorSPX(40);
+  private final I2C.Port controlPanelColorSensorI2CPort = I2C.Port.kOnboard;
+  private final ColorSensorV3 controlPanelColorSensor = new ColorSensorV3(controlPanelColorSensorI2CPort);
 
-  private final ColorSensorV3 controlPanelColorSensor;
   private final ColorMatch colorMatcher = new ColorMatch();
 
   private final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
@@ -33,9 +35,7 @@ public class ControlPanel extends SubsystemBase {
   int proximity;
 
   
-  public ControlPanel(WPI_VictorSPX controlPanelVictorSPX, ColorSensorV3 controlPanelColorSensor, Joystick operatorJoystick) {
-    this.controlPanelVictorSPX = controlPanelVictorSPX;
-    this.controlPanelColorSensor  = controlPanelColorSensor;
+  public ControlPanel(Joystick operatorJoystick) {
     this.operatorJoystick = operatorJoystick;
     
     proximity = controlPanelColorSensor .getProximity();

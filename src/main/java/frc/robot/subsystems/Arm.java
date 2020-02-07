@@ -9,8 +9,10 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.ADIS16470_IMU;
 
 public class Arm extends SubsystemBase {
   /**
@@ -19,19 +21,16 @@ public class Arm extends SubsystemBase {
   private final Joystick driverJoystick;
   private final Joystick operatorJoystick;
 
-  private final WPI_VictorSPX rotationVictorSPX; 
-  private final WPI_VictorSPX leftWinchVictorSPX;
-  private final WPI_VictorSPX rightWinchVictorSPX;
-  private final WPI_VictorSPX shimmyVictorSPX;
+  private final WPI_VictorSPX rotationVictorSPX = new WPI_VictorSPX(30);
+  private final WPI_VictorSPX leftWinchVictorSPX = new WPI_VictorSPX(31);
+  private final WPI_VictorSPX rightWinchVictorSPX= new WPI_VictorSPX(32);
+  private final WPI_VictorSPX shimmyVictorSPX = new WPI_VictorSPX(33);
+  private final Encoder armPositionEncoder = new Encoder(2,3);
+  private final ADIS16470_IMU robotImu = new ADIS16470_IMU();
   
 
 
-  public Arm(WPI_VictorSPX  rotationVictorSPX, WPI_VictorSPX leftWinchVictorSPX, 
-      WPI_VictorSPX rightWinchVictorSPX, WPI_VictorSPX shimmyVictorSPX, Joystick driverJoystick, Joystick operatorJoystick) {
-    this.rotationVictorSPX = rotationVictorSPX;
-    this.leftWinchVictorSPX = leftWinchVictorSPX;
-    this.rightWinchVictorSPX = rightWinchVictorSPX;
-    this.shimmyVictorSPX = shimmyVictorSPX;
+  public Arm(Joystick driverJoystick, Joystick operatorJoystick) {
     this.driverJoystick = driverJoystick;
     this.operatorJoystick = operatorJoystick;
     
