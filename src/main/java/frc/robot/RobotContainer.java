@@ -46,8 +46,6 @@ public class RobotContainer {
   private final Joystick driverJoystick = new Joystick(0);
   private final Joystick operatorJoystick = new Joystick(1); 
 
-  //Magazine Subsystem
-  
   //Subsystems
   private final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
   private final Arm arm = new Arm(driverJoystick, operatorJoystick);
