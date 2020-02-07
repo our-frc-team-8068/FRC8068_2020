@@ -7,15 +7,12 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.revrobotics.ColorSensorV3;
-import edu.wpi.first.wpilibj.Encoder;
+import com.revrobotics.ColorMatch;
+import com.revrobotics.ColorMatchResult;
+
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Magazine;
-import com.revrobotics.ColorMatch;
-import frc.robot.Robot;
 
 public class CmdMagazineHomeEncoder extends CommandBase {
   /**
@@ -23,39 +20,51 @@ public class CmdMagazineHomeEncoder extends CommandBase {
    */
 
   private final Magazine magazine;
-  private final WPI_VictorSPX magazineVictorSPX;
-  private final Encoder magazinePositionEncoder;
-  private final ColorSensorV3 magazineHomePositionColorSensor;
 
   private final ColorMatch colorMatcher = new ColorMatch();
+
+  ColorMatchResult match;
 
   private final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
   private final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
   private final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
   private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
 
-  public CmdMagazineHomeEncoder(Magazine magazine, WPI_VictorSPX magazineVictorSPX, Encoder magazinePositionEncoder,
-      ColorSensorV3 magazineHomePositionColorSensor, ColorMatch colorMatcher)
+  public CmdMagazineHomeEncoder(Magazine magazine)
     {
       // Use addRequirements() here to declare subsystem dependencies.
       this.magazine = magazine;
-      this.magazineHomePositionColorSensor = magazineHomePositionColorSensor;
-      this.magazinePositionEncoder = magazinePositionEncoder;
-      this.magazineVictorSPX = magazineVictorSPX;
+      addRequirements(magazine);
     }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize()
     {
-
+      colorMatcher.addColorMatch(kBlueTarget);
+      colorMatcher.addColorMatch(kGreenTarget);
+      colorMatcher.addColorMatch(kRedTarget);
+      colorMatcher.addColorMatch(kYellowTarget);
     }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() 
     {
-      magazineVictorSPX.set(ControlMode.PercentOutput, 0.5);
+      match = colorMatcher.matchClosestColor(magazine.getColorSensorColor());
+
+      if(match.color == kBlueTarget)
+      {
+        magazine.setMagazineSpeed(0.50);
+      }
+      else if(match.color == kGreenTarget)
+      {
+        magazine.setMagazineSpeed(-0.50);
+      }
+      else //This may need to be set specifically to only go to 100% if it detects black
+      {
+        magazine.setMagazineSpeed(1);
+      }
     }
 
   // Called once the command ends or is interrupted.
@@ -67,7 +76,14 @@ public class CmdMagazineHomeEncoder extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() 
-    {
-      return false;
+    {      
+      if(match.color == kRedTarget || match.color == kYellowTarget)
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
     }
 }

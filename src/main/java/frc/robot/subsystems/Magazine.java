@@ -14,6 +14,7 @@ import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LogitechGamePad;
 
@@ -29,6 +30,10 @@ public class Magazine extends SubsystemBase {
   private final Encoder magazinePositionEncoder = new Encoder(0,1);
   private final I2C.Port magazineHomePositionColorSensorI2CPort = I2C.Port.kMXP;
   private final ColorSensorV3 magazineHomePositionColorSensor = new ColorSensorV3(magazineHomePositionColorSensorI2CPort);
+
+  private boolean hasHomed = false;
+
+
 
   public Magazine(Joystick driverJoystick) {
     this.driverJoystick = driverJoystick;
@@ -55,4 +60,19 @@ public class Magazine extends SubsystemBase {
   public int getSetpointEncoderCounts() {
     return setpointEncoderCounts;
   }
+  public boolean getHasHomed() 
+  {
+    return hasHomed;
+  }
+
+  public void setHasHomed(boolean hasHomed)
+  {
+    this.hasHomed = hasHomed;
+  }
+
+  public Color getColorSensorColor()
+  {
+    return magazineHomePositionColorSensor.getColor();
+  }
 }
+
