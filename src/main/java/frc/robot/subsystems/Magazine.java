@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LogitechGamePad;
@@ -21,19 +22,16 @@ public class Magazine extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-  private final WPI_VictorSPX magazineVictorSPX;
-  private final Encoder magazinePositionEncoder;
-  private final ColorSensorV3 magazineHomePositionColorSensor;
   private final Joystick driverJoystick;
   private int setpointEncoderCounts;
 
-  public Magazine(WPI_VictorSPX magazineVictorSPX, Encoder magazinePositionEncoder, ColorSensorV3 magazineHomePositionColorSensor,
-      Joystick driverJoystick) {
-    this.magazineVictorSPX = magazineVictorSPX;
-    this.magazinePositionEncoder = magazinePositionEncoder;
-    this.magazineHomePositionColorSensor = magazineHomePositionColorSensor;
-    this.driverJoystick = driverJoystick;
+  private final WPI_VictorSPX magazineVictorSPX = new WPI_VictorSPX(50);
+  private final Encoder magazinePositionEncoder = new Encoder(0,1);
+  private final I2C.Port magazineHomePositionColorSensorI2CPort = I2C.Port.kMXP;
+  private final ColorSensorV3 magazineHomePositionColorSensor = new ColorSensorV3(magazineHomePositionColorSensorI2CPort);
 
+  public Magazine(Joystick driverJoystick) {
+    this.driverJoystick = driverJoystick;
   }
 
   @Override

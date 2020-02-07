@@ -41,9 +41,13 @@ import frc.robot.subsystems.Shooter;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
+
   //JoySticks
   private final Joystick driverJoystick = new Joystick(0);
   private final Joystick operatorJoystick = new Joystick(1);
+
+  //Example Subsystem
+  private final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 
   //Arm Subsystem
   private final WPI_VictorSPX rotationVictorSPX = new WPI_VictorSPX(30);
@@ -68,21 +72,17 @@ public class RobotContainer {
   private final WPI_VictorSPX rightDriveVictorSPX = new WPI_VictorSPX(12);
 
   //Magazine Subsystem
-  private final WPI_VictorSPX magazineVictorSPX = new WPI_VictorSPX(50);
-  private final Encoder magazinePositionEncoder = new Encoder(0,1);
-  private final I2C.Port magazineHomePositionColorSensorI2CPort = I2C.Port.kMXP;
-  private final ColorSensorV3 magazineHomePositionColorSensor = new ColorSensorV3(magazineHomePositionColorSensorI2CPort);
+
 
   //Shooter Subsystem
   private final WPI_VictorSPX preigniterVictorSPX = new WPI_VictorSPX(20);
   private final WPI_TalonSRX topShooterTalonSRX = new WPI_TalonSRX(21);
   private final WPI_TalonSRX bottomShooterTalonSRX = new WPI_TalonSRX(22);
 
-  private final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
   private final Arm arm = new Arm(rotationVictorSPX, leftWinchVictorSPX, rightWinchVictorSPX, shimmyVictorSPX, driverJoystick, operatorJoystick);
   private final Collector collector = new Collector(collectorVictorSPX, driverJoystick, operatorJoystick);
   private final DriveTrain driveTrain = new DriveTrain(leftDriveTalonSRX, rightDriveTalonSRX, leftDriveVictorSPX, rightDriveVictorSPX, driverJoystick);
-  private final Magazine magazine = new Magazine(magazineVictorSPX, magazinePositionEncoder, magazineHomePositionColorSensor, driverJoystick);
+  private final Magazine magazine = new Magazine(driverJoystick);
   private final Shooter shooter = new Shooter(preigniterVictorSPX, topShooterTalonSRX, bottomShooterTalonSRX, driverJoystick);
 
   private final ExampleCommand autoCommand = new ExampleCommand(exampleSubsystem);
