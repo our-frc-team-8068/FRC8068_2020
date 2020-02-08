@@ -23,7 +23,7 @@ public class ControlPanel extends SubsystemBase {
   private final Joystick operatorJoystick;
 
   private final WPI_VictorSPX controlPanelVictorSPX = new WPI_VictorSPX(40);
-  private final I2C.Port controlPanelColorSensorI2CPort = I2C.Port.kOnboard;
+  private final I2C.Port controlPanelColorSensorI2CPort = I2C.Port.kMXP;
   private final ColorSensorV3 controlPanelColorSensor = new ColorSensorV3(controlPanelColorSensorI2CPort);
 
   private final ColorMatch colorMatcher = new ColorMatch();

@@ -45,32 +45,40 @@ public class CmdMagazineHomeEncoder extends CommandBase {
       colorMatcher.addColorMatch(kGreenTarget);
       colorMatcher.addColorMatch(kRedTarget);
       colorMatcher.addColorMatch(kYellowTarget);
+      magazine.setHasHomed(false);
     }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() 
     {
-      match = colorMatcher.matchClosestColor(magazine.getColorSensorColor());
-
+      match = colorMatcher.matchClosestColor(magazine.getColorSensorColor()); 
+      
       if(match.color == kBlueTarget)
       {
-        magazine.setMagazineSpeed(0.50);
+        magazine.setMagazineSpeed(0.05);
+        System.out.println("Blue");
       }
       else if(match.color == kGreenTarget)
       {
-        magazine.setMagazineSpeed(-0.50);
+        magazine.setMagazineSpeed(-0.05);
+        System.out.println("Green");
       }
       else //This may need to be set specifically to only go to 100% if it detects black
       {
-        magazine.setMagazineSpeed(1);
+        magazine.setMagazineSpeed(0.1);
       }
+      System.out.println("Has Homed " + magazine.getHasHomed());
     }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) 
     {
+      magazine.setMagazineSpeed(0.0);
+      magazine.zeroEncoder();
+      magazine.setSetpointDegrees(0);
+      magazine.setHasHomed(true);
     }
 
   // Returns true when the command should end.
@@ -79,6 +87,7 @@ public class CmdMagazineHomeEncoder extends CommandBase {
     {      
       if(match.color == kRedTarget || match.color == kYellowTarget)
       {
+        System.out.println("Red or Yellow");
         return true;
       }
       else

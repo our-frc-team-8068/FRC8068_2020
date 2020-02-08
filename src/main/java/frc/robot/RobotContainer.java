@@ -24,6 +24,7 @@ import frc.robot.commands.CmdDefaultJoystickDrive;
 import frc.robot.commands.CmdDefaultMagazinePosition;
 import frc.robot.commands.CmdDefaultShoot;
 import frc.robot.commands.CmdDriveTrainInvertDirection;
+import frc.robot.commands.CmdMagazineHomeEncoder;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Collector;
@@ -51,7 +52,7 @@ public class RobotContainer {
   private final Arm arm = new Arm(driverJoystick, operatorJoystick);
   private final Collector collector = new Collector(driverJoystick, operatorJoystick);
   private final DriveTrain driveTrain = new DriveTrain(driverJoystick);
-  private final Magazine magazine = new Magazine(magazineVictorSPX, magazinePositionEncoder, magazineHomePositionColorSensor);
+  private final Magazine magazine = new Magazine(driverJoystick);
   private final Shooter shooter = new Shooter(driverJoystick);
 
   //Commands
@@ -88,10 +89,11 @@ public class RobotContainer {
     final JoystickButton collectorCollectButton = new JoystickButton(driverJoystick, 
       LogitechGamePad.LEFT_BUMPER);
     final JoystickButton invertDriveButton = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_Y);
+    final JoystickButton homeMagazine = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_B);
 
     collectorCollectButton.whileHeld(new CmdCollectorCollect(magazine, collector));
     invertDriveButton.whenPressed(new CmdDriveTrainInvertDirection(driveTrain));
-
+    homeMagazine.whenPressed(new CmdMagazineHomeEncoder(magazine));
   }
 
 
