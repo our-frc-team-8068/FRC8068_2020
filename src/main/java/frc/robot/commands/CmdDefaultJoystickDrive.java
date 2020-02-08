@@ -62,7 +62,6 @@ public class CmdDefaultJoystickDrive extends CommandBase {
         {
           // If code proceds here than the value is in quadrent I
           // Will want a positive Y,X Magnitude value.
-          System.out.println("You have entered Quadrent I " + Math.sin(joystickAngle));
           if ( leftYAxisMagnitude - rightXAxisMagnitude < 0)
           {
             driveTrain.setDriveTrainSpeeds(leftYAxisMagnitude, 0);
@@ -76,7 +75,6 @@ public class CmdDefaultJoystickDrive extends CommandBase {
         {
           // If code proceds here than the value is in quadret II
           // Will want a positive X,Y Magnitude value.
-          System.out.println("You have entered Quadrent II " + Math.sin(joystickAngle));
           if (leftYAxisMagnitude - rightXAxisMagnitude < 0)
           {
             driveTrain.setDriveTrainSpeeds(0, leftYAxisMagnitude);
