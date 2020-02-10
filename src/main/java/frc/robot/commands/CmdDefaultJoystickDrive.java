@@ -147,7 +147,7 @@ public class CmdDefaultJoystickDrive extends CommandBase {
       }
     } else {
       // Value is set to 0,0.
-      System.out.println("You are at 0,0");
+      //System.out.println("You are at 0,0");
       driveTrain.setDriveTrainSpeeds(0.0, 0.0);
     }
   }

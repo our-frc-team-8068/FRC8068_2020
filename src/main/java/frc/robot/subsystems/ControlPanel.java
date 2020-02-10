@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorSensorV3;
@@ -23,7 +25,7 @@ public class ControlPanel extends SubsystemBase {
   private final Joystick operatorJoystick;
 
   private final WPI_VictorSPX controlPanelVictorSPX = new WPI_VictorSPX(40);
-  private final I2C.Port controlPanelColorSensorI2CPort = I2C.Port.kMXP;
+  private final I2C.Port controlPanelColorSensorI2CPort = I2C.Port.kOnboard; //This should be MXP but we changed it to work on QP
   private final ColorSensorV3 controlPanelColorSensor = new ColorSensorV3(controlPanelColorSensorI2CPort);
 
   private final ColorMatch colorMatcher = new ColorMatch();
@@ -49,8 +51,8 @@ public class ControlPanel extends SubsystemBase {
   @Override
   public void periodic() {
     Color detectedColor = controlPanelColorSensor.getColor();
-
-    //System.out.println("Red" + detectedColor.red + "Green" + detectedColor.green + "Blue" + detectedColor.blue + "Distance" + proximity);
+    
+    //System.out.println("Red" + detectedColor.red + "Green" + detectedColor.green + "Blue" + detectedColor.blue + " Raw BLue is " + controlPanelColorSensor.getBlue());
     //System.out.println("Most likely color : " + colorSensor.getColor().);
     /*ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
     if(match.color == kBlueTarget)
@@ -74,4 +76,15 @@ public class ControlPanel extends SubsystemBase {
       System.out.println("Color unknown");
     }*/
   }
+
+  public void setControlPanelSpeed(double speed){
+    controlPanelVictorSPX.setNeutralMode(NeutralMode.Brake);
+    controlPanelVictorSPX.set(ControlMode.PercentOutput, speed);
+  } 
+
+  public Color getColorSensorColor()
+  {
+    return controlPanelColorSensor.getColor();
+  }
+  
 }

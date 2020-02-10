@@ -25,9 +25,11 @@ import frc.robot.commands.CmdDefaultMagazinePosition;
 import frc.robot.commands.CmdDefaultShoot;
 import frc.robot.commands.CmdDriveTrainInvertDirection;
 import frc.robot.commands.CmdMagazineHomeEncoder;
+import frc.robot.commands.CmdControlPanelRotateToColor;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Collector;
+import frc.robot.subsystems.ControlPanel;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Magazine;
@@ -54,6 +56,7 @@ public class RobotContainer {
   private final DriveTrain driveTrain = new DriveTrain(driverJoystick);
   private final Magazine magazine = new Magazine(driverJoystick);
   private final Shooter shooter = new Shooter(driverJoystick);
+  private final ControlPanel controlPanel = new ControlPanel(driverJoystick);
 
   //Commands
   private final ExampleCommand autoCommand = new ExampleCommand(exampleSubsystem);
@@ -72,6 +75,7 @@ public class RobotContainer {
     magazine.setDefaultCommand(cmdDefaultMagazinePosition);
     collector.setDefaultCommand(cmdDefaultCollector);
     shooter.setDefaultCommand(cmdDefaultShoot);
+
     //m_driveTrain.setDefaultCommand(new CmdDefaultJoystickDrive(m_driverJoystick, m_driveTrain));
 
     //m_drivetrain.setDefaultCommand(new TankDrive(() -> m_joystick.getY(Hand.kLeft),
@@ -90,10 +94,13 @@ public class RobotContainer {
       LogitechGamePad.LEFT_BUMPER);
     final JoystickButton invertDriveButton = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_Y);
     final JoystickButton homeMagazine = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_B);
+    final JoystickButton testControlPanel = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_X);
 
     collectorCollectButton.whileHeld(new CmdCollectorCollect(magazine, collector));
     invertDriveButton.whenPressed(new CmdDriveTrainInvertDirection(driveTrain));
     homeMagazine.whenPressed(new CmdMagazineHomeEncoder(magazine));
+    testControlPanel.whenPressed(new CmdControlPanelRotateToColor(controlPanel, driveTrain));
+    
   }
 
 

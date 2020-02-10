@@ -21,7 +21,7 @@ public class CmdMagazineHomeEncoder extends CommandBase {
 
   private final Magazine magazine;
 
-  private final ColorMatch colorMatcher = new ColorMatch();
+  private final ColorMatch magazineColorMatcher = new ColorMatch();
 
   ColorMatchResult match;
 
@@ -41,10 +41,10 @@ public class CmdMagazineHomeEncoder extends CommandBase {
   @Override
   public void initialize()
     {
-      colorMatcher.addColorMatch(kBlueTarget);
-      colorMatcher.addColorMatch(kGreenTarget);
-      colorMatcher.addColorMatch(kRedTarget);
-      colorMatcher.addColorMatch(kYellowTarget);
+      magazineColorMatcher.addColorMatch(kBlueTarget);
+      magazineColorMatcher.addColorMatch(kGreenTarget);
+      magazineColorMatcher.addColorMatch(kRedTarget);
+      magazineColorMatcher.addColorMatch(kYellowTarget);
       magazine.setHasHomed(false);
     }
 
@@ -52,7 +52,7 @@ public class CmdMagazineHomeEncoder extends CommandBase {
   @Override
   public void execute() 
     {
-      match = colorMatcher.matchClosestColor(magazine.getColorSensorColor()); 
+      match = magazineColorMatcher.matchClosestColor(magazine.getColorSensorColor()); 
       
       if(match.color == kBlueTarget)
       {
