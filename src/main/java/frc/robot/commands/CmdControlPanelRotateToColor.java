@@ -27,22 +27,21 @@ public class CmdControlPanelRotateToColor extends CommandBase {
   private final DriveTrain driveTrain;
   private final ColorMatch controlPanelColorMatcher = new ColorMatch();
   
-  String gameData = DriverStation.getInstance().getGameSpecificMessage();
-  
   private final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
   private final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
   private final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
   private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
 
-  ColorMatchResult match;
-
-  Timer timer = new Timer();
+  ColorMatchResult colorMatchResult;
+  Color targetColor;
 
   double endtime;
 
   boolean firstScan = true;
+  boolean invertDirection = false;
 
-  double verificationTimeoutTime = 5.0;
+  double verificationTimeoutTime = 1.0;
+  double controlPanelMotorSpeed = 0.15;
 
   public CmdControlPanelRotateToColor(ControlPanel controlPanel, DriveTrain driveTrain) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -55,43 +54,75 @@ public class CmdControlPanelRotateToColor extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    String gameData = DriverStation.getInstance().getGameSpecificMessage();
+
     controlPanelColorMatcher.addColorMatch(kBlueTarget);
     controlPanelColorMatcher.addColorMatch(kGreenTarget);
     controlPanelColorMatcher.addColorMatch(kRedTarget);
     controlPanelColorMatcher.addColorMatch(kYellowTarget);
-    
-    System.out.println("Game Data is " + gameData.charAt(0));
-    /*if(gameData.length() > 0)
+
+    colorMatchResult = controlPanelColorMatcher.matchClosestColor(controlPanel.getColorSensorColor());
+    if(gameData.length() > 0)
     {
       if (gameData.charAt(0) == 'Y')
       {
-        System.out.println("Set Color to Green");
+        targetColor = kGreenTarget;
+        if(colorMatchResult.color == kBlueTarget)
+        {
+          invertDirection = true;
+        }
       }
       else if (gameData.charAt(0) == 'G')
       {
-        System.out.println("Set Color to Yellow");
+        targetColor = kYellowTarget;
+        if(colorMatchResult.color == kRedTarget)
+        {
+          invertDirection = true;
+        }
       }
       else if (gameData.charAt(0) == 'B')
       {
-        System.out.println("Set Color to Red");
+        targetColor = kRedTarget;
+        if(colorMatchResult.color == kGreenTarget)
+        {
+          invertDirection = true;
+        }
       }
       else if (gameData.charAt(0) == 'R')
       {
-        System.out.println("Set Color to BLue");
+        targetColor = kBlueTarget;
+        if(colorMatchResult.color == kYellowTarget)
+        {
+          invertDirection = true;
+        }
       }
       else
       {
         System.out.println("Game Data not Set");
       }
-    }*/
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    controlPanel.setControlPanelSpeed(0.15);
-    match = controlPanelColorMatcher.matchClosestColor(controlPanel.getColorSensorColor()); 
-    System.out.println("Color Confidence" + match.confidence);
+  public void execute() { 
+    colorMatchResult = controlPanelColorMatcher.matchClosestColor(controlPanel.getColorSensorColor());
+    if (targetColor != colorMatchResult.color) 
+    {
+      endtime = Timer.getFPGATimestamp() + verificationTimeoutTime;
+      if(invertDirection)
+      {
+        controlPanel.setControlPanelSpeed(-controlPanelMotorSpeed);
+      }
+      else
+      {
+        controlPanel.setControlPanelSpeed(controlPanelMotorSpeed);
+      }
+    }
+    else
+    {
+      controlPanel.setControlPanelSpeed(0.0);
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -104,89 +135,13 @@ public class CmdControlPanelRotateToColor extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(gameData.length() > 0)
+    if(Timer.getFPGATimestamp() > endtime)
     {
-      if (gameData.charAt(0) == 'Y' && match.color == kGreenTarget)
-      {
-        if (firstScan)
-        {
-          endtime = timer.getFPGATimestamp() + verificationTimeoutTime;
-          firstScan = false;
-        }
-
-        System.out.println("We are waiting for the verification within Yellow");
-
-        if (timer.getFPGATimestamp() > endtime) 
-        {
-          System.out.println("Set Color to Green");
-          return true;
-        }
-        else
-        {
-          return false;
-        }
-      }
-      else if (gameData.charAt(0) == 'G' && match.color == kYellowTarget)
-      {
-        if (firstScan)
-        {
-          endtime = timer.getFPGATimestamp() + verificationTimeoutTime;
-          firstScan = false;
-        }
-        if (timer.getFPGATimestamp() > endtime) 
-        {
-          System.out.println("Set Color to Yellow");
-          return true;
-        }
-        else
-        {
-          return false;
-        }
-      }
-      else if (gameData.charAt(0) == 'B' && match.color == kRedTarget)
-      {
-        if (firstScan)
-        {
-          endtime = timer.getFPGATimestamp() + verificationTimeoutTime;
-          firstScan = false;
-        }
-        if (timer.getFPGATimestamp() > endtime) 
-        {
-          System.out.println("Set Color to Red");
-          return true;
-        }
-        else
-        {
-          return false;
-        }
-      }
-      else if (gameData.charAt(0) == 'R' && match.color == kBlueTarget)
-      {
-        if (firstScan)
-        {
-          endtime = timer.getFPGATimestamp() + verificationTimeoutTime;
-          firstScan = false;
-        }
-        if (timer.getFPGATimestamp() > endtime) 
-        {
-          System.out.println("Set Color to Blue");
-          return true;
-        }
-        else
-        {
-          return false;
-        }
-      }
-      else
-      {
-        return false;
-      }
+      return true;
     }
     else
     {
-      System.out.println("Game Data not Set");
       return false;
     }
-
   }
 }
