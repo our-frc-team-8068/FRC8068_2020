@@ -26,6 +26,7 @@ import frc.robot.commands.CmdDefaultShoot;
 import frc.robot.commands.CmdDriveTrainInvertDirection;
 import frc.robot.commands.CmdMagazineHomeEncoder;
 import frc.robot.commands.CmdControlPanelRotateToColor;
+import frc.robot.commands.CmdControlPanelRotateTurns;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Collector;
@@ -99,7 +100,7 @@ public class RobotContainer {
     collectorCollectButton.whileHeld(new CmdCollectorCollect(magazine, collector));
     invertDriveButton.whenPressed(new CmdDriveTrainInvertDirection(driveTrain));
     homeMagazine.whenPressed(new CmdMagazineHomeEncoder(magazine));
-    testControlPanel.whenPressed(new CmdControlPanelRotateToColor(controlPanel, driveTrain));
+    testControlPanel.whenPressed(new CmdControlPanelRotateTurns(controlPanel, driveTrain));
     
   }
 
