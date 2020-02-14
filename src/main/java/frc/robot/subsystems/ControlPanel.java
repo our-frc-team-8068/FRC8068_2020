@@ -55,6 +55,9 @@ public class ControlPanel extends SubsystemBase {
   private final Color kRedTarget = ColorMatch.makeColor(kRedTargetRedValue, kRedTargetGreenValue, kRedTargetBlueValue);
   private final Color kYellowTarget = ColorMatch.makeColor(kYellowTargetRedValue, kYellowTargetGreenValue, kYellowTargetBlueValue);
   
+//  private ShuffleboardTab magazineTab = Shuffleboard.getTab("Magazine"); 
+//private NetworkTableEntry ntSTSmagazineSetpointDegrees = 
+//  magazineTab.add("STSMagazineSetPointDegrees", setpointDegrees).withSize(2, 1).withPosition(0, 0).getEntry();
 
   //int proximity;
   
@@ -77,6 +80,34 @@ public class ControlPanel extends SubsystemBase {
   private NetworkTableEntry ntControlPanelYellowColorCalibration =
     controlPanelTab.add("ControlPanelYellowColorCalibration", getYellowColorCalibration)
       .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(6, 0).getEntry();
+
+  private NetworkTableEntry ntControlPanelRedRValue =
+    controlPanelTab.addPersistent("Red R Value", kRedTargetRedValue).withSize(2, 1).withPosition(0, 1).getEntry();
+  private NetworkTableEntry ntControlPanelRedGValue =
+    controlPanelTab.addPersistent("Red G Value", kRedTargetGreenValue).withSize(2, 1).withPosition(0, 2).getEntry();
+  private NetworkTableEntry ntControlPanelRedBValue =
+    controlPanelTab.addPersistent("Red B Value", kRedTargetBlueValue).withSize(2, 1).withPosition(0, 3).getEntry();
+
+  private NetworkTableEntry ntControlPanelGreenRValue =
+    controlPanelTab.addPersistent("Green R Value", kGreenTargetRedValue).withSize(2, 1).withPosition(2, 1).getEntry();
+  private NetworkTableEntry ntControlPanelGreenGValue =
+    controlPanelTab.addPersistent("Green G Value", kGreenTargetGreenValue).withSize(2, 1).withPosition(2, 2).getEntry();
+  private NetworkTableEntry ntControlPanelGreenBValue =
+    controlPanelTab.addPersistent("Green B Value", kGreenTargetBlueValue).withSize(2, 1).withPosition(2, 3).getEntry();
+
+  private NetworkTableEntry ntControlPanelBlueRValue =
+    controlPanelTab.addPersistent("Blue R Value", kBlueTargetRedValue).withSize(2, 1).withPosition(4, 1).getEntry();
+  private NetworkTableEntry ntControlPanelBlueGValue =
+    controlPanelTab.addPersistent("Blue G Value", kBlueTargetGreenValue).withSize(2, 1).withPosition(4, 2).getEntry();
+  private NetworkTableEntry ntControlPanelBlueBValue =
+    controlPanelTab.addPersistent("Blue B Value", kBlueTargetBlueValue).withSize(2, 1).withPosition(4, 3).getEntry();
+
+  private NetworkTableEntry ntControlPanelYellowRValue =
+    controlPanelTab.addPersistent("Yellow R Value", kYellowTargetRedValue).withSize(2, 1).withPosition(6, 1).getEntry();
+  private NetworkTableEntry ntControlPanelYellowGValue =
+    controlPanelTab.addPersistent("Yellow G Value", kYellowTargetGreenValue).withSize(2, 1).withPosition(6, 2).getEntry();
+  private NetworkTableEntry ntControlPanelYellowBValue =
+    controlPanelTab.addPersistent("Yellow B Value", kYellowTargetBlueValue).withSize(2, 1).withPosition(6, 3).getEntry();
     
   public ControlPanel(Joystick operatorJoystick) {
     this.operatorJoystick = operatorJoystick;
@@ -96,11 +127,33 @@ public class ControlPanel extends SubsystemBase {
     System.out.println("Boolean State " + getBlueColorCalibration);
     System.out.println("Blue R Value " + kBlueTargetRedValue + 
       " Blue Green Value " + kBlueTargetGreenValue + " Blue Blue Value " + kBlueTargetBlueValue);
+
+    kRedTargetRedValue = ntControlPanelRedRValue.getDouble(kRedTargetRedValue);
+    kRedTargetGreenValue = ntControlPanelRedGValue.getDouble(kRedTargetGreenValue);
+    kRedTargetBlueValue = ntControlPanelRedBValue.getDouble(kRedTargetBlueValue);
+
+    kGreenTargetRedValue = ntControlPanelGreenRValue.getDouble(kGreenTargetRedValue);
+    kGreenTargetGreenValue = ntControlPanelGreenGValue.getDouble(kGreenTargetGreenValue);
+    kGreenTargetBlueValue = ntControlPanelGreenBValue.getDouble(kGreenTargetBlueValue);
+
+    kBlueTargetRedValue = ntControlPanelBlueRValue.getDouble(kBlueTargetRedValue);
+    kBlueTargetGreenValue = ntControlPanelBlueGValue.getDouble(kBlueTargetGreenValue);
+    kBlueTargetBlueValue = ntControlPanelBlueBValue.getDouble(kBlueTargetBlueValue);
+
+    kYellowTargetRedValue = ntControlPanelYellowRValue.getDouble(kYellowTargetRedValue);
+    kYellowTargetGreenValue = ntControlPanelYellowGValue.getDouble(kYellowTargetGreenValue);
+    kYellowTargetBlueValue = ntControlPanelYellowBValue.getDouble(kYellowTargetBlueValue);
+
     if(ntControlPanelRedColorCalibration.getBoolean(false))
     {
       kRedTargetRedValue = detectedColor.red;
       kRedTargetGreenValue = detectedColor.green;
       kRedTargetBlueValue = detectedColor.blue;
+
+      ntControlPanelRedRValue.forceSetDouble(kRedTargetRedValue);
+      ntControlPanelRedGValue.forceSetDouble(kRedTargetGreenValue);
+      ntControlPanelRedBValue.forceSetDouble(kRedTargetBlueValue);
+
       ntControlPanelRedColorCalibration.setBoolean(false);
     }
     
@@ -109,6 +162,11 @@ public class ControlPanel extends SubsystemBase {
       kGreenTargetRedValue = detectedColor.red;
       kGreenTargetGreenValue = detectedColor.green;
       kGreenTargetBlueValue = detectedColor.blue; 
+
+      ntControlPanelGreenRValue.forceSetDouble(kGreenTargetRedValue);
+      ntControlPanelGreenGValue.forceSetDouble(kGreenTargetGreenValue);
+      ntControlPanelGreenBValue.forceSetDouble(kGreenTargetBlueValue);
+
       ntControlPanelGreenColorCalibration.setBoolean(false);
     }
 
@@ -117,6 +175,11 @@ public class ControlPanel extends SubsystemBase {
       kBlueTargetRedValue = detectedColor.red;
       kBlueTargetGreenValue = detectedColor.green;
       kBlueTargetBlueValue = detectedColor.blue;
+
+      ntControlPanelBlueRValue.forceSetDouble(kBlueTargetRedValue);
+      ntControlPanelBlueGValue.forceSetDouble(kBlueTargetGreenValue);
+      ntControlPanelBlueBValue.forceSetDouble(kBlueTargetBlueValue);
+
       ntControlPanelBlueColorCalibration.setBoolean(false);
     }
 
@@ -125,6 +188,11 @@ public class ControlPanel extends SubsystemBase {
       kYellowTargetRedValue = detectedColor.red;
       kYellowTargetGreenValue = detectedColor.green;
       kYellowTargetBlueValue = detectedColor.blue;
+
+      ntControlPanelYellowRValue.forceSetDouble(kYellowTargetRedValue);
+      ntControlPanelYellowGValue.forceSetDouble(kYellowTargetGreenValue);
+      ntControlPanelYellowBValue.forceSetDouble(kYellowTargetBlueValue);
+      
       ntControlPanelYellowColorCalibration.setBoolean(false);
     }
 
