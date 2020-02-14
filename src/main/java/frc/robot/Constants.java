@@ -16,4 +16,9 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    public static int CollectorCylinderExtendDigitalOutput = 0;
+    public static int CollectorCylinderRetractDigitalOutput = 1;
+    public static int ShooterPreIgniterCylinderExtendDigitalOutput = 2;
+    public static int ShooterPreIgniterCylinderRetractDigitalOutput = 3;
+    
 }
