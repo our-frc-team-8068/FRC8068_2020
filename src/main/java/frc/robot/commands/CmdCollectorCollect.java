@@ -29,12 +29,13 @@ public class CmdCollectorCollect extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("I'm the collector and I suck");
+    collector.extendCollectorCylinder();
   }
 
   // Called once the command ends or is interrupted.

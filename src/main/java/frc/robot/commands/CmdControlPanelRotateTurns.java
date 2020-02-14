@@ -41,7 +41,7 @@ public class CmdControlPanelRotateTurns extends CommandBase {
   boolean onTargetColor;
   boolean offTargetColor;
 
-  double debounceDuration = 0.125;
+  double debounceDuration = 0.06;
   double controlPanelMotorSpeed = 0.8;
   double onTargetColorEndTime;
   double offTargetColorEndTime;
