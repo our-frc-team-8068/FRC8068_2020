@@ -52,7 +52,7 @@ public class RobotContainer {
   private final Arm arm = new Arm(driverJoystick, operatorJoystick);
   private final Collector collector = new Collector(driverJoystick, operatorJoystick);
   private final DriveTrain driveTrain = new DriveTrain(driverJoystick);
-  private final Magazine magazine = new Magazine(driverJoystick, colorCalibrationEnabled);
+  private final Magazine magazine = new Magazine(driverJoystick);
   private final Shooter shooter = new Shooter(driverJoystick);
   private final ControlPanel controlPanel = new ControlPanel(driverJoystick, colorCalibrationEnabled);
 
@@ -60,6 +60,7 @@ public class RobotContainer {
   private final ExampleCommand autoCommand = new ExampleCommand(exampleSubsystem);
   private final CmdDefaultJoystickDrive cmdDefaultJoystickDrive = new CmdDefaultJoystickDrive(driverJoystick, driveTrain);
   private final CmdDefaultMagazinePosition cmdDefaultMagazinePosition = new CmdDefaultMagazinePosition(magazine);
+  private final CmdMagazineHomeEncoder cmdMagazineHomeEncoder = new CmdMagazineHomeEncoder(magazine);
   private final CmdDefaultCollector cmdDefaultCollector = new CmdDefaultCollector(collector);
   private final CmdDefaultShoot cmdDefaultShoot = new CmdDefaultShoot(shooter);
   /**
@@ -110,5 +111,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     return autoCommand;
+  }
+
+  public void runHomeMagazineCommand()
+  {
+    cmdMagazineHomeEncoder.schedule();
   }
 }
