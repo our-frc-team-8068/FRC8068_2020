@@ -14,6 +14,7 @@ import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class ControlPanel extends SubsystemBase {
   /**
@@ -28,9 +30,10 @@ public class ControlPanel extends SubsystemBase {
    */
   private final Joystick operatorJoystick;
 
-  private final WPI_VictorSPX controlPanelVictorSPX = new WPI_VictorSPX(40);
+  private final WPI_VictorSPX controlPanelVictorSPX = new WPI_VictorSPX(41);    //40
   private final I2C.Port controlPanelColorSensorI2CPort = I2C.Port.kOnboard; //This should be MXP but we changed it to work on QP
   private final ColorSensorV3 controlPanelColorSensor = new ColorSensorV3(controlPanelColorSensorI2CPort);
+  private final DigitalInput colorCalibrationEnabled;
 
   private final ColorMatch colorMatcher = new ColorMatch();
   
@@ -55,17 +58,10 @@ public class ControlPanel extends SubsystemBase {
   private final Color kRedTarget = ColorMatch.makeColor(kRedTargetRedValue, kRedTargetGreenValue, kRedTargetBlueValue);
   private final Color kYellowTarget = ColorMatch.makeColor(kYellowTargetRedValue, kYellowTargetGreenValue, kYellowTargetBlueValue);
   
-//  private ShuffleboardTab magazineTab = Shuffleboard.getTab("Magazine"); 
-//private NetworkTableEntry ntSTSmagazineSetpointDegrees = 
-//  magazineTab.add("STSMagazineSetPointDegrees", setpointDegrees).withSize(2, 1).withPosition(0, 0).getEntry();
-
-  //int proximity;
-  
   boolean getRedColorCalibration = false;
   boolean getGreenColorCalibration = false;
   boolean getBlueColorCalibration = false;
   boolean getYellowColorCalibration = false;
-
 
   private ShuffleboardTab controlPanelTab = Shuffleboard.getTab("Control Panel");
   private NetworkTableEntry ntControlPanelRedColorCalibration =
@@ -109,8 +105,9 @@ public class ControlPanel extends SubsystemBase {
   private NetworkTableEntry ntControlPanelYellowBValue =
     controlPanelTab.addPersistent("Yellow B Value", kYellowTargetBlueValue).withSize(2, 1).withPosition(6, 3).getEntry();
     
-  public ControlPanel(Joystick operatorJoystick) {
+  public ControlPanel(Joystick operatorJoystick, DigitalInput colorCalibrationEnabled) {
     this.operatorJoystick = operatorJoystick;
+    this.colorCalibrationEnabled = colorCalibrationEnabled;
     
     //proximity = controlPanelColorSensor .getProximity();
     colorMatcher.addColorMatch(kBlueTarget);
@@ -122,12 +119,24 @@ public class ControlPanel extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Color detectedColor = controlPanelColorSensor.getColor();
-    System.out.println("Blue Color Value " + kBlueTarget);
-    System.out.println("Boolean State " + getBlueColorCalibration);
-    System.out.println("Blue R Value " + kBlueTargetRedValue + 
-      " Blue Green Value " + kBlueTargetGreenValue + " Blue Blue Value " + kBlueTargetBlueValue);
+    colorCalibration();
+  }
 
+  public void setControlPanelSpeed(double speed){
+    controlPanelVictorSPX.setNeutralMode(NeutralMode.Brake);
+    controlPanelVictorSPX.set(ControlMode.PercentOutput, speed);
+  } 
+
+  public Color getColorSensorColor()
+  {
+    return controlPanelColorSensor.getColor();
+  }
+  
+  private void colorCalibration()
+  {
+    boolean isColorCalibrationEnabled = !colorCalibrationEnabled.get();
+    Color detectedColor = controlPanelColorSensor.getColor();
+    
     kRedTargetRedValue = ntControlPanelRedRValue.getDouble(kRedTargetRedValue);
     kRedTargetGreenValue = ntControlPanelRedGValue.getDouble(kRedTargetGreenValue);
     kRedTargetBlueValue = ntControlPanelRedBValue.getDouble(kRedTargetBlueValue);
@@ -146,89 +155,66 @@ public class ControlPanel extends SubsystemBase {
 
     if(ntControlPanelRedColorCalibration.getBoolean(false))
     {
-      kRedTargetRedValue = detectedColor.red;
-      kRedTargetGreenValue = detectedColor.green;
-      kRedTargetBlueValue = detectedColor.blue;
+      if(isColorCalibrationEnabled)
+      {
+        kRedTargetRedValue = detectedColor.red;
+        kRedTargetGreenValue = detectedColor.green;
+        kRedTargetBlueValue = detectedColor.blue;
 
-      ntControlPanelRedRValue.forceSetDouble(kRedTargetRedValue);
-      ntControlPanelRedGValue.forceSetDouble(kRedTargetGreenValue);
-      ntControlPanelRedBValue.forceSetDouble(kRedTargetBlueValue);
-
+        ntControlPanelRedRValue.forceSetDouble(kRedTargetRedValue);
+        ntControlPanelRedGValue.forceSetDouble(kRedTargetGreenValue);
+        ntControlPanelRedBValue.forceSetDouble(kRedTargetBlueValue);
+      }
+      
       ntControlPanelRedColorCalibration.setBoolean(false);
     }
     
     if(ntControlPanelGreenColorCalibration.getBoolean(false))
     {
-      kGreenTargetRedValue = detectedColor.red;
-      kGreenTargetGreenValue = detectedColor.green;
-      kGreenTargetBlueValue = detectedColor.blue; 
+      if(isColorCalibrationEnabled)
+      {
+        kGreenTargetRedValue = detectedColor.red;
+        kGreenTargetGreenValue = detectedColor.green;
+        kGreenTargetBlueValue = detectedColor.blue; 
 
-      ntControlPanelGreenRValue.forceSetDouble(kGreenTargetRedValue);
-      ntControlPanelGreenGValue.forceSetDouble(kGreenTargetGreenValue);
-      ntControlPanelGreenBValue.forceSetDouble(kGreenTargetBlueValue);
+        ntControlPanelGreenRValue.forceSetDouble(kGreenTargetRedValue);
+        ntControlPanelGreenGValue.forceSetDouble(kGreenTargetGreenValue);
+        ntControlPanelGreenBValue.forceSetDouble(kGreenTargetBlueValue);
+      }
 
       ntControlPanelGreenColorCalibration.setBoolean(false);
     }
 
     if(ntControlPanelBlueColorCalibration.getBoolean(false))
     {
-      kBlueTargetRedValue = detectedColor.red;
-      kBlueTargetGreenValue = detectedColor.green;
-      kBlueTargetBlueValue = detectedColor.blue;
+      if(isColorCalibrationEnabled)
+      {
+        kBlueTargetRedValue = detectedColor.red;
+        kBlueTargetGreenValue = detectedColor.green;
+        kBlueTargetBlueValue = detectedColor.blue;
 
-      ntControlPanelBlueRValue.forceSetDouble(kBlueTargetRedValue);
-      ntControlPanelBlueGValue.forceSetDouble(kBlueTargetGreenValue);
-      ntControlPanelBlueBValue.forceSetDouble(kBlueTargetBlueValue);
+        ntControlPanelBlueRValue.forceSetDouble(kBlueTargetRedValue);
+        ntControlPanelBlueGValue.forceSetDouble(kBlueTargetGreenValue);
+        ntControlPanelBlueBValue.forceSetDouble(kBlueTargetBlueValue);
+      }
 
       ntControlPanelBlueColorCalibration.setBoolean(false);
     }
 
     if(ntControlPanelYellowColorCalibration.getBoolean(false))
     {
-      kYellowTargetRedValue = detectedColor.red;
-      kYellowTargetGreenValue = detectedColor.green;
-      kYellowTargetBlueValue = detectedColor.blue;
+      if(isColorCalibrationEnabled)
+      {
+        kYellowTargetRedValue = detectedColor.red;
+        kYellowTargetGreenValue = detectedColor.green;
+        kYellowTargetBlueValue = detectedColor.blue;
 
-      ntControlPanelYellowRValue.forceSetDouble(kYellowTargetRedValue);
-      ntControlPanelYellowGValue.forceSetDouble(kYellowTargetGreenValue);
-      ntControlPanelYellowBValue.forceSetDouble(kYellowTargetBlueValue);
-      
+        ntControlPanelYellowRValue.forceSetDouble(kYellowTargetRedValue);
+        ntControlPanelYellowGValue.forceSetDouble(kYellowTargetGreenValue);
+        ntControlPanelYellowBValue.forceSetDouble(kYellowTargetBlueValue);
+      }
+
       ntControlPanelYellowColorCalibration.setBoolean(false);
     }
-
-    //System.out.println("Red" + detectedColor.red + "Green" + detectedColor.green + "Blue" + detectedColor.blue + " Raw BLue is " + controlPanelColorSensor.getBlue());
-    //System.out.println("Most likely color : " + colorSensor.getColor().);
-    /*ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
-    if(match.color == kBlueTarget)
-    {
-      System.out.println("Detected color : blue");
-    }
-    else if(match.color == kRedTarget)
-    {
-      System.out.println("Detected color : red");
-    }
-    else if(match.color == kGreenTarget)
-    {
-      System.out.println("Detected color : green");
-    }
-    else if(match.color == kYellowTarget)
-    {
-      System.out.println("Detected color : yellow");
-    }
-    else
-    {
-      System.out.println("Color unknown");
-    }*/
   }
-
-  public void setControlPanelSpeed(double speed){
-    controlPanelVictorSPX.setNeutralMode(NeutralMode.Brake);
-    controlPanelVictorSPX.set(ControlMode.PercentOutput, speed);
-  } 
-
-  public Color getColorSensorColor()
-  {
-    return controlPanelColorSensor.getColor();
-  }
-  
 }

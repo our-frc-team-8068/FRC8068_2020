@@ -7,26 +7,20 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.revrobotics.ColorSensorV3;
-
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.CmdCollectorCollect;
+import frc.robot.commands.CmdControlPanelRotateTurns;
 import frc.robot.commands.CmdDefaultCollector;
 import frc.robot.commands.CmdDefaultJoystickDrive;
 import frc.robot.commands.CmdDefaultMagazinePosition;
 import frc.robot.commands.CmdDefaultShoot;
 import frc.robot.commands.CmdDriveTrainInvertDirection;
 import frc.robot.commands.CmdMagazineHomeEncoder;
-import frc.robot.commands.CmdControlPanelRotateToColor;
-import frc.robot.commands.CmdControlPanelRotateTurns;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Collector;
@@ -50,14 +44,17 @@ public class RobotContainer {
   private final Joystick driverJoystick = new Joystick(0);
   private final Joystick operatorJoystick = new Joystick(1); 
 
+  private final DigitalInput colorCalibrationEnabled = new DigitalInput(Constants.DIO_MagazineCollectorAllowColorCalibration);
+
+
   //Subsystems
   private final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
   private final Arm arm = new Arm(driverJoystick, operatorJoystick);
   private final Collector collector = new Collector(driverJoystick, operatorJoystick);
   private final DriveTrain driveTrain = new DriveTrain(driverJoystick);
-  private final Magazine magazine = new Magazine(driverJoystick);
+  private final Magazine magazine = new Magazine(driverJoystick, colorCalibrationEnabled);
   private final Shooter shooter = new Shooter(driverJoystick);
-  private final ControlPanel controlPanel = new ControlPanel(driverJoystick);
+  private final ControlPanel controlPanel = new ControlPanel(driverJoystick, colorCalibrationEnabled);
 
   //Commands
   private final ExampleCommand autoCommand = new ExampleCommand(exampleSubsystem);

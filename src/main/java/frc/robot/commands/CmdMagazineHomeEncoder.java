@@ -25,11 +25,6 @@ public class CmdMagazineHomeEncoder extends CommandBase {
 
   ColorMatchResult match;
 
-  private final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
-  private final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
-  private final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
-  private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
-
   public CmdMagazineHomeEncoder(Magazine magazine)
     {
       // Use addRequirements() here to declare subsystem dependencies.
@@ -41,10 +36,10 @@ public class CmdMagazineHomeEncoder extends CommandBase {
   @Override
   public void initialize()
     {
-      magazineColorMatcher.addColorMatch(kBlueTarget);
-      magazineColorMatcher.addColorMatch(kGreenTarget);
-      magazineColorMatcher.addColorMatch(kRedTarget);
-      magazineColorMatcher.addColorMatch(kYellowTarget);
+      magazineColorMatcher.addColorMatch(magazine.getkRedTarget());
+      magazineColorMatcher.addColorMatch(magazine.getkGreenTarget());
+      magazineColorMatcher.addColorMatch(magazine.getkBlueTarget());
+      magazineColorMatcher.addColorMatch(magazine.getkYellowTarget());
       magazine.setHasHomed(false);
     }
 
@@ -54,12 +49,12 @@ public class CmdMagazineHomeEncoder extends CommandBase {
     {
       match = magazineColorMatcher.matchClosestColor(magazine.getColorSensorColor()); 
       
-      if(match.color == kBlueTarget)
+      if(match.color == magazine.getkBlueTarget())
       {
         magazine.setMagazineSpeed(0.05);
         System.out.println("Blue");
       }
-      else if(match.color == kGreenTarget)
+      else if(match.color == magazine.getkGreenTarget())
       {
         magazine.setMagazineSpeed(-0.05);
         System.out.println("Green");
@@ -85,7 +80,7 @@ public class CmdMagazineHomeEncoder extends CommandBase {
   @Override
   public boolean isFinished() 
     {      
-      if(match.color == kRedTarget || match.color == kYellowTarget)
+      if(match.color == magazine.getkRedTarget() || match.color == magazine.getkYellowTarget())
       {
         System.out.println("Red or Yellow");
         return true;
