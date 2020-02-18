@@ -54,7 +54,7 @@ public class RobotContainer {
   private final DriveTrain driveTrain = new DriveTrain(driverJoystick);
   private final Magazine magazine = new Magazine(driverJoystick);
   private final Shooter shooter = new Shooter(driverJoystick);
-  private final ControlPanel controlPanel = new ControlPanel(driverJoystick, colorCalibrationEnabled);
+  private final ControlPanel controlPanel = new ControlPanel(operatorJoystick, driveTrain);
 
   //Commands
   private final ExampleCommand autoCommand = new ExampleCommand(exampleSubsystem);
@@ -99,9 +99,7 @@ public class RobotContainer {
     invertDriveButton.whenPressed(new CmdDriveTrainInvertDirection(driveTrain));
     homeMagazine.whenPressed(new CmdMagazineHomeEncoder(magazine));
     testControlPanel.whenPressed(new CmdControlPanelRotateTurns(controlPanel, driveTrain));
-    
   }
-
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

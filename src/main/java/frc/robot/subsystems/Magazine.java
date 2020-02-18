@@ -37,12 +37,12 @@ public class Magazine extends SubsystemBase {
   private final Joystick driverJoystick;
   private double setpointDegrees = 0;
   private double scdPositionSetPointDegrees;
-  private double scdProportionalGain;
-  private double scdIntegralGain;
-  private double scdDerivativeGain;
+  private double stsProportionalGain;
+  private double stsIntegralGain;
+  private double stsDerivativeGain;
   private boolean scdUpdatePositionSetpoint = false;
 
-  private final WPI_VictorSPX victorSPX = new WPI_VictorSPX(40);//50
+  private final WPI_VictorSPX victorSPX = new WPI_VictorSPX(50);//50
   private final Encoder positionEncoder = new Encoder(Constants.DIO_MagazineEncoderYellowSignal, Constants.DIO_MagazineEncoderBlueSignal);
   private final I2C.Port colorSensorI2CPort = I2C.Port.kOnboard;
   private final ColorSensorV3 colorSensor = new ColorSensorV3(colorSensorI2CPort);
@@ -50,52 +50,51 @@ public class Magazine extends SubsystemBase {
   private ShuffleboardTab magazineColorTab = Shuffleboard.getTab("MagazineColor");
   private boolean hasHomed = false;
   private boolean colorIsRed = false;
-  private boolean colorIsGreen = false;
-  private boolean colorIsBlue = false;
   private boolean colorIsYellow = false;
+  private boolean colorIsLexan = false;
   private boolean colorCalibrationEnabled = false;
 
   private ComplexWidget ntHomeEncoder = magazineControlTab.add("ScdHomeMagazine", new CmdMagazineHomeEncoder(this)).withSize(2, 1).withPosition(0, 0);
   private NetworkTableEntry ntHasHomed = magazineControlTab.add("StsMagazineHasHomed", hasHomed).withSize(2, 1).withPosition(2, 0).getEntry();
 
   private NetworkTableEntry ntStsPositionSetpointDegrees = 
-    magazineControlTab.add("StsMagazineSetPointDegrees", setpointDegrees).withSize(2, 1).withPosition(4, 1).getEntry();
+    magazineControlTab.add("StsMagazineSetPointDegrees", 69.0).withSize(2, 1).withPosition(4, 1).getEntry();
 
   private NetworkTableEntry ntScdPositionSetpointDegrees = 
-    magazineControlTab.add("ScdMagazineSetPointDegrees", setpointDegrees).withSize(2, 1).withPosition(0, 1).getEntry();
+    magazineControlTab.add("ScdMagazineSetPointDegrees", 69.0).withSize(2, 1).withPosition(0, 1).getEntry();
 
   private NetworkTableEntry ntScdUpdatePositionSetpoint = 
-    magazineControlTab.add("ScdMagazineUpdatePositionSetpoint", scdUpdatePositionSetpoint)
+    magazineControlTab.add("ScdMagazineUpdatePositionSetpoint", false)
       .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(2, 1).getEntry();
 
   private NetworkTableEntry ntCurrentPosition =
-    magazineControlTab.add("StsMagazineCurrentPosition", 0).withSize(2, 1).withPosition(6, 1).getEntry();
+    magazineControlTab.add("StsMagazineCurrentPosition", 69.0).withSize(2, 1).withPosition(6, 1).getEntry();
     
   private NetworkTableEntry ntStsProportionalGain = 
-    magazineControlTab.addPersistent("StsMagazineProportionalGain ", scdProportionalGain).withSize(2, 1).withPosition(4, 2).getEntry();
+    magazineControlTab.addPersistent("StsMagazineProportionalGain ", 69.0).withSize(2, 1).withPosition(4, 2).getEntry();
 
   private NetworkTableEntry ntScdProportionalGain = 
-    magazineControlTab.addPersistent("ScdMagazineProportionalGain", scdProportionalGain).withSize(2, 1).withPosition(0, 2).getEntry();
+    magazineControlTab.add("ScdMagazineProportionalGain", 69.0).withSize(2, 1).withPosition(0, 2).getEntry();
 
   private NetworkTableEntry ntScdUpdateProportionalGain = 
     magazineControlTab.add("ScdMagazineUpdateProportionalGain", false)
       .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(2, 2).getEntry();
 
   private NetworkTableEntry ntStsIntegralGain = 
-    magazineControlTab.addPersistent("StsMagazineIntegralGain ", scdIntegralGain).withSize(2, 1).withPosition(4, 3).getEntry();
+    magazineControlTab.addPersistent("StsMagazineIntegralGain ", 69.0).withSize(2, 1).withPosition(4, 3).getEntry();
   
   private NetworkTableEntry ntScdIntegralGain = 
-    magazineControlTab.addPersistent("ScdMagazineIntegralGain", scdIntegralGain).withSize(2, 1).withPosition(0, 3).getEntry();
+    magazineControlTab.add("ScdMagazineIntegralGain", 69.0).withSize(2, 1).withPosition(0, 3).getEntry();
   
   private NetworkTableEntry ntScdUpdateIntegralGain = 
     magazineControlTab.add("ScdMagazineUpdateIntegralGain", false)
       .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(2, 3).getEntry();
 
   private NetworkTableEntry ntStsDerivativeGain = 
-    magazineControlTab.addPersistent("StsMagazineDerivativeGain ", scdDerivativeGain).withSize(2, 1).withPosition(4, 4).getEntry();
+    magazineControlTab.addPersistent("StsMagazineDerivativeGain ", 69.0).withSize(2, 1).withPosition(4, 4).getEntry();
     
   private NetworkTableEntry ntScdDerivativeGain = 
-    magazineControlTab.addPersistent("ScdMagazineDerivativeGain", scdDerivativeGain).withSize(2, 1).withPosition(0, 4).getEntry();
+    magazineControlTab.add("ScdMagazineDerivativeGain", 69.0).withSize(2, 1).withPosition(0, 4).getEntry();
     
   private NetworkTableEntry ntScdUpdateDerivativeGain = 
     magazineControlTab.add("ScdMagazineUpdateDerivativeGain", false)
@@ -110,81 +109,69 @@ public class Magazine extends SubsystemBase {
   private double kRedTargetGreenValue;
   private double kRedTargetBlueValue;
   private NetworkTableEntry ntRedRValue =
-    magazineColorTab.addPersistent("Magazine Red R Value", 0.0).withSize(2, 1).withPosition(2, 1).getEntry();
+    magazineColorTab.addPersistent("Magazine Red R Value", 69.0).withSize(2, 1).withPosition(2, 1).getEntry();
   private NetworkTableEntry ntRedGValue =
-    magazineColorTab.addPersistent("Magazine Red G Value", 0.0).withSize(2, 1).withPosition(4, 1).getEntry();
+    magazineColorTab.addPersistent("Magazine Red G Value", 69.0).withSize(2, 1).withPosition(4, 1).getEntry();
   private NetworkTableEntry ntRedBValue =
-    magazineColorTab.addPersistent("Magazine Red B Value", 0.0).withSize(2, 1).withPosition(6, 1).getEntry();
+    magazineColorTab.addPersistent("Magazine Red B Value", 69.0).withSize(2, 1).withPosition(6, 1).getEntry();
   private Color kRedTarget;
-
-  private double kGreenTargetRedValue;
-  private double kGreenTargetGreenValue;
-  private double kGreenTargetBlueValue;
-  private NetworkTableEntry ntGreenRValue =
-    magazineColorTab.addPersistent("Magazine Green R Value", kGreenTargetRedValue).withSize(2, 1).withPosition(2, 2).getEntry();
-  private NetworkTableEntry ntGreenGValue =
-    magazineColorTab.addPersistent("Magazine Green G Value", kGreenTargetGreenValue).withSize(2, 1).withPosition(4, 2).getEntry();
-  private NetworkTableEntry ntGreenBValue =
-    magazineColorTab.addPersistent("Magazine Green B Value", kGreenTargetBlueValue).withSize(2, 1).withPosition(6, 2).getEntry();
-  private Color kGreenTarget;
-
-  private double kBlueTargetRedValue;
-  private double kBlueTargetGreenValue;
-  private double kBlueTargetBlueValue;
-  private NetworkTableEntry ntBlueRValue =
-    magazineColorTab.addPersistent("Magazine Blue R Value", kBlueTargetRedValue).withSize(2, 1).withPosition(2, 3).getEntry();
-  private NetworkTableEntry ntBlueGValue =
-    magazineColorTab.addPersistent("Magazine Blue G Value", kBlueTargetGreenValue).withSize(2, 1).withPosition(4, 3).getEntry();
-  private NetworkTableEntry ntBlueBValue =
-    magazineColorTab.addPersistent("Magazine Blue B Value", kBlueTargetBlueValue).withSize(2, 1).withPosition(6, 3).getEntry();
-  private Color kBlueTarget;
 
   private double kYellowTargetRedValue;
   private double kYellowTargetGreenValue;
   private double kYellowTargetBlueValue;
   private NetworkTableEntry ntYellowRValue =
-    magazineColorTab.addPersistent("Magazine Yellow R Value", kYellowTargetRedValue).withSize(2, 1).withPosition(2, 4).getEntry();
+    magazineColorTab.addPersistent("Magazine Yellow R Value", 69.0).withSize(2, 1).withPosition(2, 2).getEntry();
   private NetworkTableEntry ntYellowGValue =
-    magazineColorTab.addPersistent("Magazine Yellow G Value", kYellowTargetGreenValue).withSize(2, 1).withPosition(4, 4).getEntry();
+    magazineColorTab.addPersistent("Magazine Yellow G Value", 69.0).withSize(2, 1).withPosition(4, 2).getEntry();
   private NetworkTableEntry ntYellowBValue =
-    magazineColorTab.addPersistent("Magazine Yellow B Value", kYellowTargetBlueValue).withSize(2, 1).withPosition(6, 4).getEntry();
+    magazineColorTab.addPersistent("Magazine Yellow B Value", 69.0).withSize(2, 1).withPosition(6, 2).getEntry();
   private Color kYellowTarget;
 
+  private double kLexanTargetRedValue;
+  private double kLexanTargetGreenValue;
+  private double kLexanTargetBlueValue;
+  private NetworkTableEntry ntLexanRValue =
+    magazineColorTab.addPersistent("Magazine Lexan R Value", 69.0).withSize(2, 1).withPosition(2, 3).getEntry();
+  private NetworkTableEntry ntLexanGValue =
+    magazineColorTab.addPersistent("Magazine Lexan G Value", 69.0).withSize(2, 1).withPosition(4, 3).getEntry();
+  private NetworkTableEntry ntLexanBValue =
+    magazineColorTab.addPersistent("Magazine Lexan B Value", 69.0).withSize(2, 1).withPosition(6, 3).getEntry();
+  private Color kLexanTarget;
+
   boolean getRedColorCalibration = false;
-  boolean getGreenColorCalibration = false;
-  boolean getBlueColorCalibration = false;
   boolean getYellowColorCalibration = false;
+  boolean getLexanColorCalibration = false;
 
   private NetworkTableEntry ntRedColorCalibration =
-    magazineColorTab.add("Magazine Red Color Calibration", getRedColorCalibration)
-      .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(0, 1).getEntry();     
-  private NetworkTableEntry ntGreenColorCalibration =
-    magazineColorTab.add("Magazine Green Color Calibration", getGreenColorCalibration)
-      .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(0, 2).getEntry();    
-  private NetworkTableEntry ntBlueColorCalibration =
-    magazineColorTab.add("Magazine Blue Color Calibration", getBlueColorCalibration)
+    magazineColorTab.add("Magazine Red Color Calibration", false)
+      .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(0, 1).getEntry();   
+  private NetworkTableEntry ntYellowColorCalibration = 
+    magazineColorTab.add("Magazine Yellow Color Calibration", false)
+      .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(0, 2).getEntry();
+  private NetworkTableEntry ntLexanColorCalibration = 
+    magazineColorTab.add("Magazine Lexan Color Calibration", false)
       .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(0, 3).getEntry();
-  private NetworkTableEntry ntYellowColorCalibration =
-    magazineColorTab.add("Magazine Yellow Color Calibration", getYellowColorCalibration)
-      .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(0, 4).getEntry();
 
   private NetworkTableEntry ntColorIsRed = magazineColorTab.add("Is Red", colorIsRed).withSize(1, 1).withPosition(8, 1).getEntry();
-  private NetworkTableEntry ntColorIsGreen = magazineColorTab.add("Is Green", colorIsGreen).withSize(1, 1).withPosition(8, 2).getEntry();
-  private NetworkTableEntry ntColorIsBlue = magazineColorTab.add("Is Blue", colorIsBlue).withSize(1, 1).withPosition(8, 3).getEntry();
-  private NetworkTableEntry ntColorIsYellow = magazineColorTab.add("Is Yellow", colorIsYellow).withSize(1, 1).withPosition(8, 4).getEntry();
+  private NetworkTableEntry ntColorIsYellow = magazineColorTab.add("Is Yellow", colorIsYellow).withSize(1, 1).withPosition(8, 2).getEntry();
+  private NetworkTableEntry ntColorIsLexan = magazineColorTab.add("Is Lexan", colorIsLexan).withSize(1, 1).withPosition(8, 3).getEntry();
+
 
   private NetworkTableEntry ntColorCalibrationEnabled = magazineColorTab.add("Magazine Color Calibration Enabled", colorCalibrationEnabled)
-    .withWidget(BuiltInWidgets.kToggleSwitch).withSize(2, 1).withPosition(6, 0).getEntry();
+    .withWidget(BuiltInWidgets.kToggleSwitch).withSize(2, 1).withPosition(0, 0).getEntry();
 
+  private NetworkTableEntry ntMagazineColorSensorCurrentRed = magazineColorTab.add("MagazineColorSensorCurrentRed", 69.0).withSize(2,1).withPosition(2,0).getEntry();
+  private NetworkTableEntry ntMagazineColorSensorCurrentGreen = magazineColorTab.add("MagazineColorSensorCurentGreen", 69.0).withSize(2, 1).withPosition(4, 0).getEntry();
+  private NetworkTableEntry ntMagazineColorSensorCurrentBlue = magazineColorTab.add("MagazineColorSensorCurrentBlue", 69.0).withSize(2, 1).withPosition(6, 0).getEntry();
+    
   public Magazine(Joystick driverJoystick) {
     this.driverJoystick = driverJoystick;
 
     getNewShuffleboardData();
 
     kRedTarget = new Color(new Color8Bit((int) (kRedTargetRedValue * 255), (int) (kRedTargetGreenValue * 255), (int) (kRedTargetBlueValue * 255)));
-    kGreenTarget  = new Color(new Color8Bit((int) (kGreenTargetRedValue * 255), (int) (kGreenTargetGreenValue * 255), (int) (kGreenTargetBlueValue * 255)));
-    kBlueTarget = new Color(new Color8Bit((int) (kBlueTargetRedValue * 255), (int) (kBlueTargetGreenValue * 255), (int) (kBlueTargetBlueValue * 255)));
     kYellowTarget  = new Color(new Color8Bit((int) (kYellowTargetRedValue * 255), (int) (kYellowTargetGreenValue * 255), (int) (kYellowTargetBlueValue * 255)));
+    kLexanTarget = new Color(new Color8Bit((int) (kLexanTargetRedValue * 255), (int) (kLexanTargetGreenValue * 255), (int) (kLexanTargetBlueValue * 255)));
 
     updateColorMatcher();
   }
@@ -192,11 +179,12 @@ public class Magazine extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    ntStsPositionSetpointDegrees.setDouble(setpointDegrees);
-    ntStsProportionalGain.setDouble(scdProportionalGain);
-    ntStsIntegralGain.setDouble(scdIntegralGain);
-    ntStsDerivativeGain.setDouble(scdDerivativeGain);
+    ntMagazineColorSensorCurrentRed.forceSetDouble(colorSensor.getColor().red);
+    ntMagazineColorSensorCurrentGreen.forceSetDouble(colorSensor.getColor().green);
+    ntMagazineColorSensorCurrentBlue.forceSetDouble(colorSensor.getColor().blue);
 
+    ntStsPositionSetpointDegrees.setDouble(setpointDegrees);
+    
     colorCalibrationEnabled = ntColorCalibrationEnabled.getBoolean(false);
 
     ntCurrentPosition.forceSetDouble(getPositionInDegrees());
@@ -215,63 +203,35 @@ public class Magazine extends SubsystemBase {
       ntScdUpdatePositionSetpoint.setBoolean(false);
     }
 
-    if(ntScdUpdateProportionalGain.getBoolean(true))
-    {
-      scdProportionalGain = ntScdProportionalGain.getDouble(0);
-      ntScdUpdateProportionalGain.setBoolean(false);
-    }
-    
-    if(ntScdUpdateIntegralGain.getBoolean(true))
-    {
-      scdIntegralGain = ntScdIntegralGain.getDouble(0);
-      ntScdUpdateIntegralGain.setBoolean(false);
-    }
-
-    if(ntScdUpdateDerivativeGain.getBoolean(true))
-    {
-      scdDerivativeGain = ntScdDerivativeGain.getDouble(0);
-      ntScdUpdateDerivativeGain.setBoolean(false);
-    }
-
     colorMatchResult = colorMatcher.matchClosestColor(colorSensor.getColor()); 
 
     if(colorMatchResult.color == kRedTarget)
     {
       colorIsRed = true;
-      colorIsGreen = false;
-      colorIsBlue = false;
       colorIsYellow = false;
-    }
-    else if(colorMatchResult.color == kGreenTarget)
-    {
-      colorIsRed = false;
-      colorIsGreen = true;
-      colorIsBlue = false;
-      colorIsYellow = false;
-    }
-    else if(colorMatchResult.color == kBlueTarget)
-    {
-      colorIsRed = false;
-      colorIsGreen = false;
-      colorIsBlue = true;
-      colorIsYellow = false;
+      colorIsLexan = false;
     }
     else if(colorMatchResult.color == kYellowTarget)
     {
       colorIsRed = false;
-      colorIsGreen = false;
-      colorIsBlue = false;
       colorIsYellow = true;
+      colorIsLexan = false;
+    }
+    else if(colorMatchResult.color == kLexanTarget)
+    {
+      colorIsRed = false;
+      colorIsYellow = false;
+      colorIsLexan = true;
     }
 
     ntColorIsRed.setBoolean(colorIsRed);
-    ntColorIsGreen.setBoolean(colorIsGreen);
-    ntColorIsBlue.setBoolean(colorIsBlue);
     ntColorIsYellow.setBoolean(colorIsYellow);
+    ntColorIsLexan.setBoolean(colorIsLexan);
 
     ntHasHomed.setBoolean(hasHomed);
 
     colorCalibration();
+    PIDCalibrations();
   }
 
   /*public int getEncoderValue() {
@@ -326,16 +286,6 @@ public class Magazine extends SubsystemBase {
   {
     return colorIsRed;
   }
-
-  public boolean colorIsGreen()
-  {
-    return colorIsGreen;
-  }
-  
-  public boolean colorIsBlue()
-  {
-    return colorIsBlue;
-  }
   
   public boolean colorIsYellow()
   {
@@ -351,32 +301,27 @@ public class Magazine extends SubsystemBase {
   {
     colorMatcher = new ColorMatch();
     colorMatcher.addColorMatch(kRedTarget);
-    colorMatcher.addColorMatch(kGreenTarget);
-    colorMatcher.addColorMatch(kBlueTarget);
     colorMatcher.addColorMatch(kYellowTarget);
+    colorMatcher.addColorMatch(kLexanTarget);
   }
 
   private void getNewShuffleboardData()
   {
-    kRedTargetRedValue = ntRedRValue.getDouble(kRedTargetRedValue);
-    kRedTargetGreenValue = ntRedGValue.getDouble(kRedTargetGreenValue);
-    kRedTargetBlueValue = ntRedBValue.getDouble(kRedTargetBlueValue);
+    kRedTargetRedValue = ntRedRValue.getDouble(69.0);
+    kRedTargetGreenValue = ntRedGValue.getDouble(69.0);
+    kRedTargetBlueValue = ntRedBValue.getDouble(69.0);
 
-    kGreenTargetRedValue = ntGreenRValue.getDouble(kGreenTargetRedValue);
-    kGreenTargetGreenValue = ntGreenGValue.getDouble(kGreenTargetGreenValue);
-    kGreenTargetBlueValue = ntGreenBValue.getDouble(kGreenTargetBlueValue);
+    kYellowTargetRedValue = ntYellowRValue.getDouble(69.0);
+    kYellowTargetGreenValue = ntYellowGValue.getDouble(69.0);
+    kYellowTargetBlueValue = ntYellowBValue.getDouble(69.0);
 
-    kBlueTargetRedValue = ntBlueRValue.getDouble(kBlueTargetRedValue);
-    kBlueTargetGreenValue = ntBlueGValue.getDouble(kBlueTargetGreenValue);
-    kBlueTargetBlueValue = ntBlueBValue.getDouble(kBlueTargetBlueValue);
+    kLexanTargetRedValue = ntLexanRValue.getDouble(69.0);
+    kLexanTargetGreenValue = ntLexanGValue.getDouble(69.0);
+    kLexanTargetBlueValue = ntLexanBValue.getDouble(69.0);
 
-    kYellowTargetRedValue = ntYellowRValue.getDouble(kYellowTargetRedValue);
-    kYellowTargetGreenValue = ntYellowGValue.getDouble(kYellowTargetGreenValue);
-    kYellowTargetBlueValue = ntYellowBValue.getDouble(kYellowTargetBlueValue);
-
-    scdProportionalGain = ntStsProportionalGain.getDouble(scdProportionalGain);
-    scdIntegralGain = ntStsIntegralGain.getDouble(scdIntegralGain);
-    scdDerivativeGain = ntStsDerivativeGain.getDouble(scdDerivativeGain);
+    stsProportionalGain = ntStsProportionalGain.getDouble(69.0);
+    stsIntegralGain = ntStsIntegralGain.getDouble(69.0);
+    stsDerivativeGain = ntStsDerivativeGain.getDouble(69.0);
   }
 
   private void colorCalibration()
@@ -403,46 +348,6 @@ public class Magazine extends SubsystemBase {
       ntRedColorCalibration.setBoolean(false);
     }
     
-    if(ntGreenColorCalibration.getBoolean(false))
-    {
-      if(colorCalibrationEnabled)
-      {
-        kGreenTargetRedValue = detectedColor.red;
-        kGreenTargetGreenValue = detectedColor.green;
-        kGreenTargetBlueValue = detectedColor.blue; 
-
-        ntGreenRValue.forceSetDouble(kGreenTargetRedValue);
-        ntGreenGValue.forceSetDouble(kGreenTargetGreenValue);
-        ntGreenBValue.forceSetDouble(kGreenTargetBlueValue);
-        kGreenTarget = new Color(new Color8Bit((int) (kGreenTargetRedValue * 255), 
-          (int) (kGreenTargetGreenValue * 255), (int) (kGreenTargetBlueValue * 255)));
-
-        updateColorMatcher();
-      }
-      colorCalibrationEnabled = false;
-      ntGreenColorCalibration.setBoolean(false);
-    }
-
-    if(ntBlueColorCalibration.getBoolean(false))
-    {
-      if(colorCalibrationEnabled)
-      {
-        kBlueTargetRedValue = detectedColor.red;
-        kBlueTargetGreenValue = detectedColor.green;
-        kBlueTargetBlueValue = detectedColor.blue;
-
-        ntBlueRValue.forceSetDouble(kBlueTargetRedValue);
-        ntBlueGValue.forceSetDouble(kBlueTargetGreenValue);
-        ntBlueBValue.forceSetDouble(kBlueTargetBlueValue);
-        kBlueTarget = new Color(new Color8Bit((int) (kBlueTargetRedValue * 255), 
-          (int) (kBlueTargetGreenValue * 255), (int) (kBlueTargetBlueValue * 255)));
-
-        updateColorMatcher();
-      }
-      colorCalibrationEnabled = false;
-      ntBlueColorCalibration.setBoolean(false);
-    }
-
     if(ntYellowColorCalibration.getBoolean(false))
     {
       if(colorCalibrationEnabled)
@@ -462,22 +367,67 @@ public class Magazine extends SubsystemBase {
       colorCalibrationEnabled = false;
       ntYellowColorCalibration.setBoolean(false);
     }
+
+    if(ntLexanColorCalibration.getBoolean(false))
+    {
+      if(colorCalibrationEnabled)
+      {
+        kLexanTargetRedValue = detectedColor.red;
+        kLexanTargetGreenValue = detectedColor.green;
+        kLexanTargetBlueValue = detectedColor.blue;
+
+        ntLexanRValue.forceSetDouble(kLexanTargetRedValue);
+        ntLexanGValue.forceSetDouble(kLexanTargetGreenValue);
+        ntLexanBValue.forceSetDouble(kLexanTargetBlueValue);
+        kLexanTarget = new Color(new Color8Bit((int) (kLexanTargetRedValue * 255), 
+          (int) (kLexanTargetGreenValue * 255), (int) (kLexanTargetBlueValue * 255)));
+
+        updateColorMatcher();
+      }
+      colorCalibrationEnabled = false;
+      ntLexanColorCalibration.setBoolean(false);
+    }
     ntColorCalibrationEnabled.setBoolean(colorCalibrationEnabled);
   }
 
   public double getProportionalGain()
   {
-    return scdProportionalGain;
+    return stsProportionalGain;
   }
 
   public double getIntegralGain()
   {
-    return scdIntegralGain;
+    return stsIntegralGain;
   }
 
   public double getDerivativeGain()
   {
-    return scdDerivativeGain;
+    return stsDerivativeGain;
+  }
+
+  public void PIDCalibrations()
+  {
+    if(ntScdUpdateProportionalGain.getBoolean(false))
+    {
+      stsProportionalGain = ntScdProportionalGain.getDouble(69.0);
+      ntStsProportionalGain.forceSetDouble(stsProportionalGain);
+      ntScdUpdateProportionalGain.setBoolean(false);
+    }
+    
+    if(ntScdUpdateIntegralGain.getBoolean(false))
+    {
+      stsIntegralGain = ntScdIntegralGain.getDouble(69.0);
+      ntStsIntegralGain.forceSetDouble(stsIntegralGain);
+      ntScdUpdateIntegralGain.setBoolean(false);
+    }
+
+    if(ntScdUpdateDerivativeGain.getBoolean(false))
+    {
+      stsDerivativeGain = ntScdDerivativeGain.getDouble(69.0);
+      ntStsDerivativeGain.forceSetDouble(stsDerivativeGain);
+      ntScdUpdateDerivativeGain.setBoolean(false);
+    }
+
   }
 }
 

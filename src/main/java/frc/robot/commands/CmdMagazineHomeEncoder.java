@@ -41,21 +41,7 @@ public class CmdMagazineHomeEncoder extends CommandBase {
   @Override
   public void execute() 
     {      
-      if(magazine.colorIsBlue())
-      {
-        magazine.setSpeed(-slowHomeSpeed);
-        //System.out.println("Blue");
-      }
-      else if(magazine.colorIsGreen())
-      {
-        magazine.setSpeed(slowHomeSpeed);
-        //System.out.println("Green");
-      }
-      else 
-      {
-        magazine.setSpeed(fastHomeSpeed);
-      }
-      //System.out.println("Has Homed " + magazine.getHasHomed());
+      magazine.setSpeed(slowHomeSpeed);
     }
 
   // Called once the command ends or is interrupted.

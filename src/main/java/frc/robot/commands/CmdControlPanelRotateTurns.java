@@ -35,7 +35,7 @@ public class CmdControlPanelRotateTurns extends CommandBase {
   double endtime;
 
   int colorCount;
-  int finalColorCount = 8;
+  int finalColorCount;
   
   boolean allowColorCount = false;
   boolean onTargetColor;
@@ -59,6 +59,7 @@ public class CmdControlPanelRotateTurns extends CommandBase {
   @Override
   public void initialize() {
     colorCount = 0;
+    finalColorCount = (int) (controlPanel.getNumberOfTurnsToRotate() * 2) + 1;
 
     controlPanelColorMatcher.addColorMatch(kBlueTarget);
     controlPanelColorMatcher.addColorMatch(kGreenTarget);
