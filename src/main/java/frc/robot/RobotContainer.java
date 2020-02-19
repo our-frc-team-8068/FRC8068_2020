@@ -92,13 +92,9 @@ public class RobotContainer {
     final JoystickButton collectorCollectButton = new JoystickButton(driverJoystick, 
       LogitechGamePad.LEFT_BUMPER);
     final JoystickButton invertDriveButton = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_Y);
-    final JoystickButton homeMagazine = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_B);
-    final JoystickButton testControlPanel = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_X);
 
     collectorCollectButton.whileHeld(new CmdCollectorCollect(magazine, collector));
     invertDriveButton.whenPressed(new CmdDriveTrainInvertDirection(driveTrain));
-    homeMagazine.whenPressed(new CmdMagazineHomeEncoder(magazine));
-    testControlPanel.whenPressed(new CmdControlPanelRotateTurns(controlPanel, driveTrain));
   }
 
   /**

@@ -38,7 +38,7 @@ public class ControlPanel extends SubsystemBase {
   private final ColorSensorV3 colorSensor = new ColorSensorV3(controlPanelColorSensorI2CPort);
   private boolean colorCalibrationEnabled = false;
   private ShuffleboardTab controlPanelColorTab = Shuffleboard.getTab("ControlPanelColor");
-  private ShuffleboardTab controlPanelControlTab = Shuffleboard.getTab("ControlPanelControl");
+  private ShuffleboardTab controlPanelControlTab = Shuffleboard.getTab("ControlPanelControl").;
   private double numberOfTurnsToRotate = 0;
 
   private ComplexWidget ntCmdRotateTurns;
