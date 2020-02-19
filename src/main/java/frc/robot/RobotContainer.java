@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.CmdCollectorCollect;
 import frc.robot.commands.CmdControlPanelRotateTurns;
 import frc.robot.commands.CmdDefaultCollector;
+import frc.robot.commands.CmdDefaultControlPanel;
 import frc.robot.commands.CmdDefaultJoystickDrive;
 import frc.robot.commands.CmdDefaultMagazinePosition;
 import frc.robot.commands.CmdDefaultShoot;
@@ -63,6 +64,7 @@ public class RobotContainer {
   private final CmdMagazineHomeEncoder cmdMagazineHomeEncoder = new CmdMagazineHomeEncoder(magazine);
   private final CmdDefaultCollector cmdDefaultCollector = new CmdDefaultCollector(collector);
   private final CmdDefaultShoot cmdDefaultShoot = new CmdDefaultShoot(shooter);
+  private final CmdDefaultControlPanel cmdDefaultControlPanel = new CmdDefaultControlPanel(operatorJoystick, controlPanel);
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
@@ -74,6 +76,7 @@ public class RobotContainer {
     magazine.setDefaultCommand(cmdDefaultMagazinePosition);
     collector.setDefaultCommand(cmdDefaultCollector);
     shooter.setDefaultCommand(cmdDefaultShoot);
+    controlPanel.setDefaultCommand(cmdDefaultControlPanel);
 
     //m_driveTrain.setDefaultCommand(new CmdDefaultJoystickDrive(m_driverJoystick, m_driveTrain));
 

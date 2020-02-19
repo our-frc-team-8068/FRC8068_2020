@@ -23,15 +23,15 @@ public final class LogitechGamePad {
     public static final int BUTTON_Y = 4;
     public static final int LEFT_BUMPER = 5;
     public static final int RIGHT_BUMPER = 6;
-    public static final int BACK = 7;
-    public static final int START = 8;
+    public static final int BACK = 7;                   //Invert Drive
+    public static final int START = 8;                  //Winch Up
     public static final int LEFT_STICK_BUTTON = 9;
     public static final int RIGHT_STICK_BUTTON = 10;
     
     public static final int LEFT_X_AXIS = 0;       //LEFT => -1    RIGHT => +1       
     public static final int LEFT_Y_AXIS = 1;       //UP => -1      DOWN => +1
-    public static final int LEFT_TRIGGER = 2;
-    public static final int RIGHT_TRIGGER = 3;
+    public static final int LEFT_TRIGGER = 2;      //Collect 
+    public static final int RIGHT_TRIGGER = 3;     //Shoot 
     public static final int RIGHT_X_AXIS = 4;      //LEFT => -1    RIGHT => +1
     public static final int RIGHT_Y_AXIS = 5;      //UP => -1      DOWN => +1
 }
