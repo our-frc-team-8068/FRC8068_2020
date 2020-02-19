@@ -7,26 +7,21 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.revrobotics.ColorSensorV3;
-
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.CmdCollectorCollect;
+import frc.robot.commands.CmdControlPanelRotateTurns;
 import frc.robot.commands.CmdDefaultCollector;
+import frc.robot.commands.CmdDefaultControlPanel;
 import frc.robot.commands.CmdDefaultJoystickDrive;
 import frc.robot.commands.CmdDefaultMagazinePosition;
 import frc.robot.commands.CmdDefaultShoot;
 import frc.robot.commands.CmdDriveTrainInvertDirection;
 import frc.robot.commands.CmdMagazineHomeEncoder;
-import frc.robot.commands.CmdControlPanelRotateToColor;
-import frc.robot.commands.CmdControlPanelRotateTurns;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Collector;
@@ -50,6 +45,9 @@ public class RobotContainer {
   private final Joystick driverJoystick = new Joystick(0);
   private final Joystick operatorJoystick = new Joystick(1); 
 
+  private final DigitalInput colorCalibrationEnabled = new DigitalInput(Constants.DIO_MagazineCollectorAllowColorCalibration);
+
+
   //Subsystems
   private final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
   private final Arm arm = new Arm(driverJoystick, operatorJoystick);
@@ -57,14 +55,16 @@ public class RobotContainer {
   private final DriveTrain driveTrain = new DriveTrain(driverJoystick);
   private final Magazine magazine = new Magazine(driverJoystick);
   private final Shooter shooter = new Shooter(driverJoystick);
-  private final ControlPanel controlPanel = new ControlPanel(driverJoystick);
+  private final ControlPanel controlPanel = new ControlPanel(operatorJoystick, driveTrain);
 
   //Commands
   private final ExampleCommand autoCommand = new ExampleCommand(exampleSubsystem);
   private final CmdDefaultJoystickDrive cmdDefaultJoystickDrive = new CmdDefaultJoystickDrive(driverJoystick, driveTrain);
   private final CmdDefaultMagazinePosition cmdDefaultMagazinePosition = new CmdDefaultMagazinePosition(magazine);
+  private final CmdMagazineHomeEncoder cmdMagazineHomeEncoder = new CmdMagazineHomeEncoder(magazine);
   private final CmdDefaultCollector cmdDefaultCollector = new CmdDefaultCollector(collector);
   private final CmdDefaultShoot cmdDefaultShoot = new CmdDefaultShoot(shooter);
+  private final CmdDefaultControlPanel cmdDefaultControlPanel = new CmdDefaultControlPanel(operatorJoystick, controlPanel);
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
@@ -76,6 +76,7 @@ public class RobotContainer {
     magazine.setDefaultCommand(cmdDefaultMagazinePosition);
     collector.setDefaultCommand(cmdDefaultCollector);
     shooter.setDefaultCommand(cmdDefaultShoot);
+    controlPanel.setDefaultCommand(cmdDefaultControlPanel);
 
     //m_driveTrain.setDefaultCommand(new CmdDefaultJoystickDrive(m_driverJoystick, m_driveTrain));
 
@@ -94,16 +95,10 @@ public class RobotContainer {
     final JoystickButton collectorCollectButton = new JoystickButton(driverJoystick, 
       LogitechGamePad.LEFT_BUMPER);
     final JoystickButton invertDriveButton = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_Y);
-    final JoystickButton homeMagazine = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_B);
-    final JoystickButton testControlPanel = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_X);
 
     collectorCollectButton.whileHeld(new CmdCollectorCollect(magazine, collector));
     invertDriveButton.whenPressed(new CmdDriveTrainInvertDirection(driveTrain));
-    homeMagazine.whenPressed(new CmdMagazineHomeEncoder(magazine));
-    testControlPanel.whenPressed(new CmdControlPanelRotateTurns(controlPanel, driveTrain));
-    
   }
-
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -113,5 +108,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     return autoCommand;
+  }
+
+  public void runHomeMagazineCommand()
+  {
+    cmdMagazineHomeEncoder.schedule();
   }
 }

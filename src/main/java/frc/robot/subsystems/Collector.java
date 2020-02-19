@@ -26,8 +26,8 @@ public class Collector extends SubsystemBase {
   private final Joystick operatorJoystick;
   
   private final WPI_VictorSPX collectorVictorSPX = new WPI_VictorSPX(45);
-  private final DoubleSolenoid collectorDeploymentSolenoid = new DoubleSolenoid(Constants.CollectorCylinderExtendDigitalOutput,
-      Constants.CollectorCylinderRetractDigitalOutput);
+  private final DoubleSolenoid collectorDeploymentSolenoid = new DoubleSolenoid(Constants.DIO_CollectorCylinderExtend,
+      Constants.DIO_CollectorCYlinderRetract);
 
   public Collector(Joystick driverJoystick, Joystick operatorJoystick) {
     this.driverJoystick = driverJoystick;

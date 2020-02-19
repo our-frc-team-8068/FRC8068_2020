@@ -20,19 +20,19 @@ public final class LogitechJoystick {
     public static final int TRIGGER = 1;
     public static final int BUTTON_2 = 2;
     public static final int BUTTON_3 = 3;
-    public static final int BUTTON_4 = 4;
-    public static final int BUTTON_5 = 5;
-    public static final int BUTTON_6 = 6;
+    public static final int BUTTON_4 = 4;       // Rotate To Color
+    public static final int BUTTON_5 = 5;      
+    public static final int BUTTON_6 = 6;       // Rotate To Turn
     public static final int BUTTON_7 = 7;
     public static final int BUTTON_8 = 8;
     public static final int BUTTON_9 = 9;
     public static final int BUTTON_10 = 10;
-    public static final int BUTTON_11 = 11;
-    public static final int BUTTON_12 = 12;
+    public static final int BUTTON_11 = 11;     // Auto Shimmy
+    public static final int BUTTON_12 = 12;     // Winch Up
     
-    public static final int X_AXIS = 0;        //LEFT => -1    RIGHT => +1       
+    public static final int X_AXIS = 0;        //LEFT => -1    RIGHT => +1      Manual Shimmy 
     public static final int Y_AXIS = 1;        //UP => -1      DOWN => +1
-    public static final int TWIST_AXIS = 2;    //CCW => -1     CW => +1
+    public static final int TWIST_AXIS = 2;    //CCW => -1     CW => +1         Manual Control Panel
     public static final int THROTTLE = 3;      //UP => -1      DOWN => +1
 }
 

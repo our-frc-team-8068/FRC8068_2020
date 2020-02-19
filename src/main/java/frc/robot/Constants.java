@@ -16,9 +16,22 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static int CollectorCylinderExtendDigitalOutput = 0;
-    public static int CollectorCylinderRetractDigitalOutput = 1;
-    public static int ShooterPreIgniterCylinderExtendDigitalOutput = 2;
-    public static int ShooterPreIgniterCylinderRetractDigitalOutput = 3;
+    public static int DIO_MagazineEncoderBlueSignal = 0;
+    public static int DIO_MagazineEncoderYellowSignal = 1;
+    public static int DIO_CollectorCylinderExtend = 2;
+    public static int DIO_CollectorCYlinderRetract = 3;
+    public static int DIO_ShooterPreIgniterCylinderExtend = 4;
+    public static int DIO_ShooterPreIgniterCylinderRetract = 5;
+    public static int DIO_MagazineCollectorAllowColorCalibration = 6;
+    public static int DIO_UnassignedSeven = 7;
+    public static int DIO_UnassignedEight = 8;
+    public static int DIO_UnassignedNine = 9;
+
+    public static int AI_CollectorBallPresent = 0;
+    public static int AI_UnassignedOne = 1;
+    public static int AI_UnassignedTwo = 2;
+    public static int AI_UnassignedThree = 3;
+
+
     
 }

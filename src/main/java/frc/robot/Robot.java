@@ -24,6 +24,8 @@ public class Robot extends TimedRobot {
 
   private RobotContainer robotContainer;
 
+  private boolean autonHasRun = false;
+
   //ControlPanel control = new ControlPanel();
 
   /**
@@ -70,11 +72,13 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     autonomousCommand = robotContainer.getAutonomousCommand();
-
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
+
+    autonHasRun = true;
+    robotContainer.runHomeMagazineCommand();
   }
 
   /**
@@ -92,6 +96,11 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
+    }
+    
+    if(!autonHasRun)
+    {
+      robotContainer.runHomeMagazineCommand();
     }
   }
 

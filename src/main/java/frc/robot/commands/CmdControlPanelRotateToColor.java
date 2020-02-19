@@ -25,18 +25,14 @@ public class CmdControlPanelRotateToColor extends CommandBase {
    */
   private final ControlPanel controlPanel;
   private final DriveTrain driveTrain;
-  private final ColorMatch controlPanelColorMatcher = new ColorMatch();
-  
-  private final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
-  private final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
-  private final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
-  private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
 
-  ColorMatchResult colorMatchResult;
   Color targetColor;
 
   double endtime;
 
+  char manuallyDesignatedColor;
+
+  boolean useFMSColor;
   boolean firstScan = true;
   boolean invertDirection = false;
 
@@ -47,6 +43,19 @@ public class CmdControlPanelRotateToColor extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     this.controlPanel = controlPanel;
     this.driveTrain = driveTrain;
+
+    useFMSColor = true;
+    
+    addRequirements(controlPanel, driveTrain);
+  }
+
+  public CmdControlPanelRotateToColor(ControlPanel controlPanel, DriveTrain driveTrain, char manuallyDesignatedColor) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.controlPanel = controlPanel;
+    this.driveTrain = driveTrain;
+    this.manuallyDesignatedColor = manuallyDesignatedColor;
+
+    useFMSColor = false;
     
     addRequirements(controlPanel, driveTrain);
   }
@@ -55,59 +64,68 @@ public class CmdControlPanelRotateToColor extends CommandBase {
   @Override
   public void initialize() {
     String gameData = DriverStation.getInstance().getGameSpecificMessage();
+    char targetColorChar;
 
-    controlPanelColorMatcher.addColorMatch(kBlueTarget);
-    controlPanelColorMatcher.addColorMatch(kGreenTarget);
-    controlPanelColorMatcher.addColorMatch(kRedTarget);
-    controlPanelColorMatcher.addColorMatch(kYellowTarget);
-
-    colorMatchResult = controlPanelColorMatcher.matchClosestColor(controlPanel.getColorSensorColor());
-    if(gameData.length() > 0)
+    if(useFMSColor)
     {
-      if (gameData.charAt(0) == 'Y')
+      
+      if(gameData.length() > 0)
       {
-        targetColor = kGreenTarget;
-        if(colorMatchResult.color == kBlueTarget)
-        {
-          invertDirection = true;
-        }
-      }
-      else if (gameData.charAt(0) == 'G')
-      {
-        targetColor = kYellowTarget;
-        if(colorMatchResult.color == kRedTarget)
-        {
-          invertDirection = true;
-        }
-      }
-      else if (gameData.charAt(0) == 'B')
-      {
-        targetColor = kRedTarget;
-        if(colorMatchResult.color == kGreenTarget)
-        {
-          invertDirection = true;
-        }
-      }
-      else if (gameData.charAt(0) == 'R')
-      {
-        targetColor = kBlueTarget;
-        if(colorMatchResult.color == kYellowTarget)
-        {
-          invertDirection = true;
-        }
+        targetColorChar = gameData.charAt(0);
       }
       else
       {
-        System.out.println("Game Data not Set");
+        targetColorChar = 'x';
       }
+      
+    }
+    else
+    {
+      targetColorChar = manuallyDesignatedColor;
+    }
+
+    if (targetColorChar == 'Y')
+    {
+      targetColor = controlPanel.getKGreenTarget();
+      if(controlPanel.colorIsBlue())
+      {
+        invertDirection = true;
+      }
+    }
+    else if (targetColorChar == 'G')
+    {
+      targetColor = controlPanel.getKYellowTarget();
+      if(controlPanel.colorIsRed())
+      {
+        invertDirection = true;
+      }
+    }
+    else if (targetColorChar == 'B')
+    {
+      targetColor = controlPanel.getKRedTarget();
+      if(controlPanel.colorIsGreen())
+      {
+        invertDirection = true;
+      }
+    }
+    else if (targetColorChar == 'R')
+    {
+      targetColor = controlPanel.getKBlueTarget();
+      if(controlPanel.colorIsYellow())
+      {
+        invertDirection = true;
+      }
+    }
+    else
+    {
+      System.out.println("Game Data not Set");
     }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() { 
-    colorMatchResult = controlPanelColorMatcher.matchClosestColor(controlPanel.getColorSensorColor());
-    if (targetColor != colorMatchResult.color) 
+    if (targetColor != controlPanel.getColorMatcherColor()) 
     {
       endtime = Timer.getFPGATimestamp() + verificationTimeoutTime;
       if(invertDirection)
@@ -129,7 +147,7 @@ public class CmdControlPanelRotateToColor extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     firstScan = true; // Reset the first scan boolean back to true
-    controlPanel.setControlPanelSpeed(0);
+    controlPanel.setControlPanelSpeed(0.0);
   }
 
   // Returns true when the command should end.

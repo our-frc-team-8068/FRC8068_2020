@@ -24,15 +24,15 @@ public class CmdDefaultMagazinePosition extends PIDCommand {
   public CmdDefaultMagazinePosition(Magazine magazine) {
     super(
       // The controller that the command will use
-      new PIDController(0.00077, 0, 0.00003),
+      new PIDController(magazine.getProportionalGain(), magazine.getIntegralGain(), magazine.getDerivativeGain()),
       // This should return the measurement
-      () -> magazine.getMagazineEncoderValue(),
+      () -> magazine.getPositionInDegrees(),
       // This should return the setpoint (can also be a constant)
-      () -> magazine.getSetpointEncoderCounts(),
+      () -> magazine.getSetpointInDegrees(),
       // This uses the output
       output -> {
         // Use the output here
-        magazine.setMagazineSpeed(output);
+        magazine.setSpeed(output);
       });
       this.magazine = magazine;
     // Use addRequirements() here to declare subsystem dependencies.
