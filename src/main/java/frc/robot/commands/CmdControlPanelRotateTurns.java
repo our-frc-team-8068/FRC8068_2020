@@ -10,7 +10,9 @@ package frc.robot.commands;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ControlPanel;
@@ -151,6 +153,8 @@ public class CmdControlPanelRotateTurns extends CommandBase {
       }
       controlPanel.setControlPanelSpeed(controlPanelMotorSpeed);
     }*/
+    
+    controlPanel.setNumberOfColorCounts(colorCount);
   }
 
   // Called once the command ends or is interrupted.

@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.CmdControlPanelRotateToColor;
 import frc.robot.commands.CmdControlPanelRotateTurns;
 
 public class ControlPanel extends SubsystemBase {
@@ -41,10 +42,17 @@ public class ControlPanel extends SubsystemBase {
   private double numberOfTurnsToRotate = 0;
 
   private ComplexWidget ntCmdRotateTurns;
-  private NetworkTableEntry ntScdNumberOfTurnsToRotate = controlPanelControlTab.add("SCD Number Of Turns To Rotate", 69)
+  private ComplexWidget ntCmdRotateToRed;
+  private ComplexWidget ntCmdRotateToGreen;
+  private ComplexWidget ntCmdRotateToBlue;
+  private ComplexWidget ntCmdRotateToYellow;
+  private NetworkTableEntry ntScdNumberOfTurnsToRotate = controlPanelControlTab.add("SCD Number Of Turns To Rotate", 69.0)
     .withSize(2, 1).withPosition(0, 0).getEntry();
   private NetworkTableEntry ntStsNumberOfTurnsToRotate = controlPanelControlTab.addPersistent("STS Number Of Turns To Rotate", 69.0)
     .withSize(2, 1).withPosition(4, 0).getEntry();
+
+  private NetworkTableEntry ntSTSNumberOfColorCounts = controlPanelControlTab.add("STS Number of Color Counts", 69.0)
+    .withSize(2, 1).withPosition(6, 0).getEntry();
 
   private ColorMatch colorMatcher = new ColorMatch();
 
@@ -148,6 +156,13 @@ public class ControlPanel extends SubsystemBase {
 
     ntCmdRotateTurns = controlPanelControlTab.add("CmdRotateTurns", new CmdControlPanelRotateTurns(this, driveTrain)).withSize(2, 1).withPosition(2, 0);
 
+    ntCmdRotateToRed = controlPanelControlTab.add("CmdRotateToRed", new CmdControlPanelRotateToColor(this, driveTrain, 'R')).withSize(2, 1).withPosition(0, 1);
+
+    ntCmdRotateToGreen = controlPanelControlTab.add("CmdRotateToGreen", new CmdControlPanelRotateToColor(this, driveTrain, 'G')).withSize(2, 1).withPosition(2, 1);
+
+    ntCmdRotateToBlue = controlPanelControlTab.add("CmdRotateToBlue", new CmdControlPanelRotateToColor(this, driveTrain, 'B')).withSize(2, 1).withPosition(4, 1);
+
+    ntCmdRotateToYellow = controlPanelControlTab.add("CmdRotateToYellow", new CmdControlPanelRotateToColor(this, driveTrain, 'Y')).withSize(2, 1).withPosition(6, 1);
   }
 
   @Override
@@ -328,5 +343,54 @@ public class ControlPanel extends SubsystemBase {
       ntYellowColorCalibration.setBoolean(false);
     }
     ntColorCalibrationEnabled.setBoolean(colorCalibrationEnabled);
+  }
+  
+  public boolean colorIsRed()
+  {
+    return colorIsRed;
+  }
+  
+  public boolean colorIsYellow()
+  {
+    return colorIsYellow;
+  }
+
+  public boolean colorIsBlue()
+  {
+    return colorIsBlue;
+  }
+
+  public boolean colorIsGreen()
+  {
+    return colorIsGreen;
+  }
+
+  public Color getKRedTarget()
+  {
+    return kRedTarget;
+  }
+
+  public Color getKBlueTarget()
+  {
+    return kBlueTarget;
+  }
+
+  public Color getKGreenTarget()
+  {
+    return kGreenTarget;
+  }
+
+  public Color getKYellowTarget()
+  {
+    return kYellowTarget;
+  }
+
+  public Color getColorMatcherColor()
+  {
+    return colorMatchResult.color;
+  }
+  public void setNumberOfColorCounts(int numberOfColorCounts)
+  {
+    ntSTSNumberOfColorCounts.forceSetDouble(numberOfColorCounts);
   }
 }
