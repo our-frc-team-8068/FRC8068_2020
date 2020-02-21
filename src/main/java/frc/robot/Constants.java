@@ -16,8 +16,8 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static int DIO_MagazineEncoderBlueSignal = 0;
-    public static int DIO_MagazineEncoderYellowSignal = 1;
+    public static int DIO_MagazineEncoderYellowSignal = 0;
+    public static int DIO_MagazineEncoderBlueSignal = 1;
     public static int DIO_CollectorCylinderExtend = 2;
     public static int DIO_CollectorCYlinderRetract = 3;
     public static int DIO_ShooterPreIgniterCylinderExtend = 4;

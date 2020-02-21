@@ -21,7 +21,6 @@ public class CmdMagazineHomeEncoder extends CommandBase {
 
   private final Magazine magazine;
   private double slowHomeSpeed = 0.05;
-  private double fastHomeSpeed = 0.1;
 
   public CmdMagazineHomeEncoder(Magazine magazine)
     {
@@ -35,12 +34,14 @@ public class CmdMagazineHomeEncoder extends CommandBase {
   public void initialize()
     {
       magazine.setHasHomed(false);
+      System.out.println("CmdMagazineHomeEncoder.initialize");
     }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() 
-    {      
+    {  
+      System.out.println("CmdMagazineHomeEncoder.execute");    
       magazine.setSpeed(slowHomeSpeed);
     }
 

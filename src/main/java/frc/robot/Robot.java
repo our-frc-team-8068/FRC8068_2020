@@ -76,9 +76,8 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
-
-    autonHasRun = true;
     robotContainer.runHomeMagazineCommand();
+    autonHasRun = true;
   }
 
   /**

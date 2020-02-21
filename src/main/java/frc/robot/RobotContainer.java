@@ -22,6 +22,7 @@ import frc.robot.commands.CmdDefaultMagazinePosition;
 import frc.robot.commands.CmdDefaultShoot;
 import frc.robot.commands.CmdDriveTrainInvertDirection;
 import frc.robot.commands.CmdMagazineHomeEncoder;
+import frc.robot.commands.CmdPIDTest;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Collector;
@@ -65,6 +66,7 @@ public class RobotContainer {
   private final CmdDefaultCollector cmdDefaultCollector = new CmdDefaultCollector(collector);
   private final CmdDefaultShoot cmdDefaultShoot = new CmdDefaultShoot(shooter);
   private final CmdDefaultControlPanel cmdDefaultControlPanel = new CmdDefaultControlPanel(operatorJoystick, controlPanel);
+  private final CmdPIDTest cmdPIDTest = new CmdPIDTest(magazine);
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
@@ -73,7 +75,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     driveTrain.setDefaultCommand(cmdDefaultJoystickDrive);
-    magazine.setDefaultCommand(cmdDefaultMagazinePosition);
+    magazine.setDefaultCommand(cmdPIDTest);
     collector.setDefaultCommand(cmdDefaultCollector);
     shooter.setDefaultCommand(cmdDefaultShoot);
     controlPanel.setDefaultCommand(cmdDefaultControlPanel);
