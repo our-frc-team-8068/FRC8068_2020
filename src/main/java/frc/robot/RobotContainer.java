@@ -23,6 +23,7 @@ import frc.robot.commands.CmdDefaultShoot;
 import frc.robot.commands.CmdDriveTrainInvertDirection;
 import frc.robot.commands.CmdMagazineHomeEncoder;
 import frc.robot.commands.CmdPIDTest;
+import frc.robot.commands.CmdShooterShoot;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Collector;
@@ -97,9 +98,13 @@ public class RobotContainer {
     final JoystickButton collectorCollectButton = new JoystickButton(driverJoystick, 
       LogitechGamePad.LEFT_BUMPER);
     final JoystickButton invertDriveButton = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_Y);
+    final JoystickButton testShooter = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_B);
+    final JoystickButton shooterDeploy = new JoystickButton(driverJoystick, LogitechGamePad.RIGHT_TRIGGER);
 
     collectorCollectButton.whileHeld(new CmdCollectorCollect(magazine, collector));
     invertDriveButton.whenPressed(new CmdDriveTrainInvertDirection(driveTrain));
+    testShooter.whileHeld(new CmdShooterShoot(magazine, shooter));
+
   }
 
   /**
@@ -116,4 +121,5 @@ public class RobotContainer {
   {
     cmdMagazineHomeEncoder.schedule();
   }
+
 }

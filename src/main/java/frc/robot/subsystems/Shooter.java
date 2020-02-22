@@ -12,11 +12,15 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
+import frc.robot.commands.CmdShooterShoot;
 
 public class Shooter extends SubsystemBase {
   /**
@@ -25,15 +29,20 @@ public class Shooter extends SubsystemBase {
   private final Joystick driverJoystick;
 
   private final WPI_VictorSPX preigniterVictorSPX = new WPI_VictorSPX(20);
-  public final WPI_TalonSRX topShooterTalonSRX = new WPI_TalonSRX(21);
+  public final WPI_TalonSRX topShooterTalonSRX = new WPI_TalonSRX(21); // 21
   public final WPI_TalonSRX bottomShooterTalonSRX = new WPI_TalonSRX(22);
+  //public final Compressor pneumaticsCompressor = new Compressor(70);
+  //public final Solenoid preigniterSolenoid = new Solenoid(59);
   private double stsProportionalGain;
   private double stsIntegralGain;
   private double stsDerivativeGain;
   public double stsShooterUpperShooterHighSpeed;
   public double stsShooterLowerShooterHighSpeed;
-  private double stsShooterUpperShooterLowSpeed;
-  private double stsShooterLowerShooterLowSpeed;
+  public double stsShooterUpperShooterLowSpeed;
+  public double stsShooterLowerShooterLowSpeed;
+  private boolean shooterHighSpeed = false;
+  private boolean shooterLowSpeed = false;
+  //private boolean cmdEnableShooterShoot = false;
 
   private ShuffleboardTab shooterControlTab = Shuffleboard.getTab("ShooterControl"); 
   
@@ -110,8 +119,12 @@ public class Shooter extends SubsystemBase {
   private NetworkTableEntry ntUpperTalonCurrentVelocity = 
     shooterControlTab.addPersistent("ShooterUpperTalonCurrentVelocity", 69.0).withSize(2, 1).withPosition(6, 4).getEntry();  
     
-    private NetworkTableEntry ntLowerTalonCurrentVelocity = 
-    shooterControlTab.addPersistent("ShooterLowerTalonCurrentVelocity", 69.0).withSize(2, 1).withPosition(9, 4).getEntry();
+  private NetworkTableEntry ntLowerTalonCurrentVelocity = 
+    shooterControlTab.addPersistent("ShooterLowerTalonCurrentVelocity", 69.0).withSize(2, 1).withPosition(8, 4).getEntry();
+  
+    private NetworkTableEntry ntEnableCmdShooterShoot = 
+    shooterControlTab.add("enableCmdShooterShoot", false)
+      .withWidget(BuiltInWidgets.kToggleSwitch).withSize(1, 1).withPosition(9, 4).getEntry();
     
   public Shooter(Joystick driverJoystick) {
     this.driverJoystick = driverJoystick;
@@ -126,6 +139,9 @@ public class Shooter extends SubsystemBase {
     
     topShooterTalonSRX.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
     bottomShooterTalonSRX.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+
+    topShooterTalonSRX.setInverted(true);
+    bottomShooterTalonSRX.setInverted(false);
   }
 
   @Override
@@ -135,6 +151,9 @@ public class Shooter extends SubsystemBase {
     ntUpperTalonCurrentVelocity.forceSetDouble(topShooterTalonSRX.getSelectedSensorVelocity());
     ntLowerTalonCurrentVelocity.forceSetDouble(bottomShooterTalonSRX.getSelectedSensorVelocity());
     PIDCalibrations();
+
+    //cmdEnableShooterShoot = ntEnableCmdShooterShoot.getBoolean(false);
+
   }
 
   public void getNewShuffleboardData()
@@ -206,4 +225,40 @@ public class Shooter extends SubsystemBase {
       ntScdLowerShooterLowSpeed.setBoolean(false);
     }
   }
+
+    public void setShooterSpeed()
+    {
+      if(driverJoystick.getRawAxis(2) > 0.1)
+      {
+        if(driverJoystick.getRawAxis(2) >= 0.51)
+        {
+          shooterHighSpeed = true;
+        }
+        else
+        {
+          shooterLowSpeed = true;
+        }
+      }
+    }
+
+    public boolean getShooterHighSpeed()
+    {
+      return shooterHighSpeed;
+    }
+
+    public boolean getShooterLowSpeed()
+    {
+      return shooterLowSpeed;
+    }
+
+ /* public void testShooter()
+  {
+    if(ntEnableCmdShooterShoot.getBoolean(false))
+    {
+      if(cmdEnableShooterShoot)
+      {
+        runCmdShooterShoot();
+      }
+    }
+  }*/
 }

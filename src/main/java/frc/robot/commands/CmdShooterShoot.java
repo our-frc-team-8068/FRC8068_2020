@@ -9,7 +9,11 @@ package frc.robot.commands;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.LogitechGamePad;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Magazine;
 import frc.robot.subsystems.Shooter;
 
@@ -37,10 +41,19 @@ public class CmdShooterShoot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.topShooterTalonSRX.set(ControlMode.Velocity, shooter.stsShooterUpperShooterHighSpeed);
-    shooter.bottomShooterTalonSRX.set(ControlMode.Velocity, shooter.stsShooterLowerShooterHighSpeed);
-
+    if(shooter.getShooterHighSpeed())
+    {
+      shooter.topShooterTalonSRX.set(ControlMode.Velocity, shooter.stsShooterUpperShooterHighSpeed);
+      shooter.bottomShooterTalonSRX.set(ControlMode.Velocity, shooter.stsShooterLowerShooterHighSpeed);
+    }
+    else if(shooter.getShooterLowSpeed())
+    {
+      shooter.topShooterTalonSRX.set(ControlMode.Velocity, shooter.stsShooterUpperShooterLowSpeed);
+      shooter.bottomShooterTalonSRX.set(ControlMode.Velocity, shooter.stsShooterLowerShooterLowSpeed);
+    }
     
+    //shooter.preigniterSolenoid.set(false);
+    System.out.println("Welcome to the shooting command");
   }
 
   // Called once the command ends or is interrupted.
@@ -51,6 +64,8 @@ public class CmdShooterShoot extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+      return false;
+    
+    
   }
 }
