@@ -7,6 +7,8 @@
 
 package frc.robot.commands;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Magazine;
 import frc.robot.subsystems.Shooter;
@@ -29,11 +31,16 @@ public class CmdShooterShoot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    shooter.topShooterTalonSRX.set(ControlMode.Velocity, shooter.stsShooterUpperShooterHighSpeed);
+    shooter.bottomShooterTalonSRX.set(ControlMode.Velocity, shooter.stsShooterLowerShooterHighSpeed);
+
+    
   }
 
   // Called once the command ends or is interrupted.
