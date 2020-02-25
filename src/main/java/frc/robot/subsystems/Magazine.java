@@ -42,7 +42,7 @@ public class Magazine extends SubsystemBase {
   private double stsDerivativeGain;
   private boolean scdUpdatePositionSetpoint = false;
 
-  private final WPI_VictorSPX victorSPX = new WPI_VictorSPX(40);//50
+  private final WPI_VictorSPX victorSPX = new WPI_VictorSPX(50);//50
   private final Encoder positionEncoder = new Encoder(Constants.DIO_MagazineEncoderBlueSignal, Constants.DIO_MagazineEncoderYellowSignal);
   private final I2C.Port colorSensorI2CPort = I2C.Port.kOnboard;
   private final ColorSensorV3 colorSensor = new ColorSensorV3(colorSensorI2CPort);

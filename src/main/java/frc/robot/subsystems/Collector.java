@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-//import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
+import static edu.wpi.first.wpilibj.DoubleSolenoid.Value.*;
 
 public class Collector extends SubsystemBase {
   /**
@@ -27,7 +27,7 @@ public class Collector extends SubsystemBase {
   
   private final WPI_VictorSPX collectorVictorSPX = new WPI_VictorSPX(45);
   private final DoubleSolenoid collectorDeploymentSolenoid = new DoubleSolenoid(Constants.DIO_CollectorCylinderExtend,
-      Constants.DIO_CollectorCYlinderRetract);
+    Constants.DIO_CollectorCYlinderRetract);
 
   public Collector(Joystick driverJoystick, Joystick operatorJoystick) {
     this.driverJoystick = driverJoystick;

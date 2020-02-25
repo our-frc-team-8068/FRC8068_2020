@@ -22,8 +22,6 @@ import frc.robot.commands.CmdDefaultMagazinePosition;
 import frc.robot.commands.CmdDefaultShoot;
 import frc.robot.commands.CmdDriveTrainInvertDirection;
 import frc.robot.commands.CmdMagazineHomeEncoder;
-import frc.robot.commands.CmdPIDTest;
-import frc.robot.commands.CmdShooterShoot;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Collector;
@@ -32,6 +30,7 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Magazine;
 import frc.robot.subsystems.Shooter;
+import edu.wpi.first.wpilibj.XboxController;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -46,6 +45,8 @@ public class RobotContainer {
   //JoySticks
   private final Joystick driverJoystick = new Joystick(0);
   private final Joystick operatorJoystick = new Joystick(1); 
+
+  private XboxController testController = new XboxController(2);
 
   private final DigitalInput colorCalibrationEnabled = new DigitalInput(Constants.DIO_MagazineCollectorAllowColorCalibration);
 
@@ -65,9 +66,9 @@ public class RobotContainer {
   private final CmdDefaultMagazinePosition cmdDefaultMagazinePosition = new CmdDefaultMagazinePosition(magazine);
   private final CmdMagazineHomeEncoder cmdMagazineHomeEncoder = new CmdMagazineHomeEncoder(magazine);
   private final CmdDefaultCollector cmdDefaultCollector = new CmdDefaultCollector(collector);
-  private final CmdDefaultShoot cmdDefaultShoot = new CmdDefaultShoot(shooter);
+  private final CmdDefaultShoot cmdDefaultShoot = new CmdDefaultShoot(shooter, magazine, driverJoystick);
   private final CmdDefaultControlPanel cmdDefaultControlPanel = new CmdDefaultControlPanel(operatorJoystick, controlPanel);
-  private final CmdPIDTest cmdPIDTest = new CmdPIDTest(magazine);
+
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
@@ -76,7 +77,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     driveTrain.setDefaultCommand(cmdDefaultJoystickDrive);
-    magazine.setDefaultCommand(cmdPIDTest);
+    magazine.setDefaultCommand(cmdDefaultMagazinePosition);
     collector.setDefaultCommand(cmdDefaultCollector);
     shooter.setDefaultCommand(cmdDefaultShoot);
     controlPanel.setDefaultCommand(cmdDefaultControlPanel);
@@ -98,12 +99,9 @@ public class RobotContainer {
     final JoystickButton collectorCollectButton = new JoystickButton(driverJoystick, 
       LogitechGamePad.LEFT_BUMPER);
     final JoystickButton invertDriveButton = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_Y);
-    final JoystickButton testShooter = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_B);
-    final JoystickButton shooterDeploy = new JoystickButton(driverJoystick, LogitechGamePad.RIGHT_TRIGGER);
 
     collectorCollectButton.whileHeld(new CmdCollectorCollect(magazine, collector));
     invertDriveButton.whenPressed(new CmdDriveTrainInvertDirection(driveTrain));
-    testShooter.whileHeld(new CmdShooterShoot(magazine, shooter));
 
   }
 

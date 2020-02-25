@@ -12,7 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.ADIS16470_IMU;
+
 
 public class Arm extends SubsystemBase {
   /**
@@ -26,7 +26,6 @@ public class Arm extends SubsystemBase {
   private final WPI_VictorSPX rightWinchVictorSPX= new WPI_VictorSPX(32);
   private final WPI_VictorSPX shimmyVictorSPX = new WPI_VictorSPX(33);
   private final Encoder armPositionEncoder = new Encoder(2,3);
-  private final ADIS16470_IMU robotImu = new ADIS16470_IMU();
   
 
 

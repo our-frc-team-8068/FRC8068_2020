@@ -33,7 +33,7 @@ public class ControlPanel extends SubsystemBase {
    */
   private final Joystick operatorJoystick;
 
-  private final WPI_VictorSPX controlPanelVictorSPX = new WPI_VictorSPX(50);    //40
+  private final WPI_VictorSPX controlPanelVictorSPX = new WPI_VictorSPX(40);    //40
   private final I2C.Port controlPanelColorSensorI2CPort = I2C.Port.kOnboard; //This should be MXP but we changed it to work on QP
   private final ColorSensorV3 colorSensor = new ColorSensorV3(controlPanelColorSensorI2CPort);
   private boolean colorCalibrationEnabled = false;
