@@ -57,13 +57,13 @@ public class CmdDefaultShoot extends CommandBase {
   public void execute() {
     if(driverJoystick.getRawAxis(LogitechGamePad.RIGHT_TRIGGER) >= shootHighTriggerPosition)
     {
-      bottomShooterSpeed = shooter.stsShooterLowerShooterHighSpeed;
-      topShooterSpeed = shooter.stsShooterUpperShooterHighSpeed;
+      bottomShooterSpeed = shooter.convertRpmToEncoderCounts(shooter.stsShooterLowerShooterHighSpeed);
+      topShooterSpeed = shooter.convertRpmToEncoderCounts(shooter.stsShooterUpperShooterHighSpeed);
     }
     else if(driverJoystick.getRawAxis(LogitechGamePad.RIGHT_TRIGGER) >= shootLowTriggerPosition)
     {
-      bottomShooterSpeed = shooter.stsShooterLowerShooterLowSpeed;
-      topShooterSpeed = shooter.stsShooterUpperShooterLowSpeed;
+      bottomShooterSpeed = shooter.convertEncoderCountstoRpm(shooter.stsShooterLowerShooterLowSpeed);
+      topShooterSpeed = shooter.convertEncoderCountstoRpm(shooter.stsShooterUpperShooterLowSpeed);
     }
     else
     {
@@ -77,8 +77,8 @@ public class CmdDefaultShoot extends CommandBase {
     }
     else
     {
-      shooter.topShooterTalonSRX.set(ControlMode.Velocity, 60.0);
-      shooter.bottomShooterTalonSRX.set(ControlMode.Velocity, 60.0);
+      shooter.topShooterTalonSRX.set(ControlMode.Velocity, topShooterSpeed);
+      shooter.bottomShooterTalonSRX.set(ControlMode.Velocity, bottomShooterSpeed);
     }
 
     //shooter.topShooterTalonSRX.set(ControlMode.PercentOutput, defaultShooterTopShooterPercentage);

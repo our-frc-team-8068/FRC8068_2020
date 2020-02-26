@@ -143,8 +143,8 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    ntUpperTalonCurrentVelocity.forceSetDouble(topShooterTalonSRX.getSelectedSensorVelocity());
-    ntLowerTalonCurrentVelocity.forceSetDouble(bottomShooterTalonSRX.getSelectedSensorVelocity());
+    ntUpperTalonCurrentVelocity.forceSetDouble(convertEncoderCountstoRpm(topShooterTalonSRX.getSelectedSensorVelocity()));
+    ntLowerTalonCurrentVelocity.forceSetDouble(convertEncoderCountstoRpm(bottomShooterTalonSRX.getSelectedSensorVelocity()));
     PIDCalibrations();
 
     //cmdEnableShooterShoot = ntEnableCmdShooterShoot.getBoolean(false);
@@ -196,28 +196,28 @@ public class Shooter extends SubsystemBase {
     {
       stsShooterUpperShooterHighSpeed = ntScdUpperShooterHighSpeed.getDouble(69.0);
       ntStsUpperShooterHighSpeed.forceSetDouble(stsShooterUpperShooterHighSpeed);
-      ntScdUpperShooterHighSpeed.setBoolean(false);
+      ntScdUpdateUpperShooterHighSpeed.setBoolean(false);
     }
 
     if(ntScdUpdateLowerShooterHighSpeed.getBoolean(false))
     {
       stsShooterLowerShooterHighSpeed = ntScdLowerShooterHighSpeed.getDouble(69.0);
       ntStsLowerShooterHighSpeed.forceSetDouble(stsShooterLowerShooterHighSpeed);
-      ntScdLowerShooterHighSpeed.setBoolean(false);
+      ntScdUpdateLowerShooterHighSpeed.setBoolean(false);
     }
 
     if(ntScdUpdateUpperShooterLowSpeed.getBoolean(false))
     {
       stsShooterUpperShooterLowSpeed = ntScdUpperShooterLowSpeed.getDouble(69.0);
       ntStsUpperShooterLowSpeed.forceSetDouble(stsShooterUpperShooterLowSpeed);
-      ntScdUpperShooterLowSpeed.setBoolean(false);
+      ntScdUpdateUpperShooterLowSpeed.setBoolean(false);
     }
 
     if(ntScdUpdateLowerShooterLowSpeed.getBoolean(false))
     {
       stsShooterLowerShooterLowSpeed = ntScdLowerShooterLowSpeed.getDouble(69.0);
       ntStsLowerShooterLowSpeed.forceSetDouble(stsShooterLowerShooterLowSpeed);
-      ntScdLowerShooterLowSpeed.setBoolean(false);
+      ntScdUpdateLowerShooterLowSpeed.setBoolean(false);
     }
   }
 
@@ -246,14 +246,13 @@ public class Shooter extends SubsystemBase {
       return shooterLowSpeed;
     }
 
- /* public void testShooter()
-  {
-    if(ntEnableCmdShooterShoot.getBoolean(false))
+    public double convertRpmToEncoderCounts(double rpm)
     {
-      if(cmdEnableShooterShoot)
-      {
-        runCmdShooterShoot();
-      }
+      return rpm * ( 4096 / (60.0 * 10.0) );
     }
-  }*/
+
+    public double convertEncoderCountstoRpm(double encoderCounts)
+    {
+      return ( ( 10.0 * 60.0 ) / 4096 ) * encoderCounts;
+    }
 }
