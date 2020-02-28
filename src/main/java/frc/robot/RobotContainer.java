@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.CmdCollectorCollect;
-import frc.robot.commands.CmdControlPanelRotateTurns;
 import frc.robot.commands.CmdDefaultCollector;
 import frc.robot.commands.CmdDefaultControlPanel;
 import frc.robot.commands.CmdDefaultJoystickDrive;
@@ -30,7 +29,7 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Magazine;
 import frc.robot.subsystems.Shooter;
-import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.subsystems.Vision;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -59,6 +58,7 @@ public class RobotContainer {
   private final Magazine magazine = new Magazine(driverJoystick);
   private final Shooter shooter = new Shooter(driverJoystick);
   private final ControlPanel controlPanel = new ControlPanel(operatorJoystick, driveTrain);
+  private final Vision vison = new Vision(driverJoystick);
 
   //Commands
   private final ExampleCommand autoCommand = new ExampleCommand(exampleSubsystem);
