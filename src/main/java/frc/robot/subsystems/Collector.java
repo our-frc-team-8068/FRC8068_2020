@@ -40,6 +40,11 @@ public class Collector extends SubsystemBase {
 
   }
 
+  public void collect(double speed)
+  {
+    collectorVictorSPX.set(speed);
+  }
+
   public void extendCollectorCylinder()
   {
     collectorDeploymentSolenoid.set(Value.kForward);

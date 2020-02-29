@@ -62,8 +62,8 @@ public class CmdDefaultShoot extends CommandBase {
     }
     else if(driverJoystick.getRawAxis(LogitechGamePad.RIGHT_TRIGGER) >= shootLowTriggerPosition)
     {
-      bottomShooterSpeed = shooter.convertEncoderCountstoRpm(shooter.stsShooterLowerShooterLowSpeed);
-      topShooterSpeed = shooter.convertEncoderCountstoRpm(shooter.stsShooterUpperShooterLowSpeed);
+      bottomShooterSpeed = shooter.convertRpmToEncoderCounts(shooter.stsShooterLowerShooterLowSpeed);
+      topShooterSpeed = shooter.convertRpmToEncoderCounts(shooter.stsShooterUpperShooterLowSpeed);
     }
     else
     {
@@ -74,11 +74,16 @@ public class CmdDefaultShoot extends CommandBase {
     {
       shooter.topShooterTalonSRX.set(ControlMode.PercentOutput, 0.0);
       shooter.bottomShooterTalonSRX.set(ControlMode.PercentOutput, 0.0);
+     // shooter.retractPreignitor();
+      shooter.setPreigniterSpeed(0.0);
     }
     else
     {
+      System.out.println("top setpoint : " + topShooterSpeed + ", lower setpoint : " + bottomShooterSpeed);
       shooter.topShooterTalonSRX.set(ControlMode.Velocity, topShooterSpeed);
       shooter.bottomShooterTalonSRX.set(ControlMode.Velocity, bottomShooterSpeed);
+      shooter.setPreigniterSpeed(0.75);
+     // shooter.extendPreignitor();
     }
 
     //shooter.topShooterTalonSRX.set(ControlMode.PercentOutput, defaultShooterTopShooterPercentage);

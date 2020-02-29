@@ -12,14 +12,15 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 //import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
+import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
   /**
@@ -30,8 +31,7 @@ public class Shooter extends SubsystemBase {
   private final WPI_VictorSPX preigniterVictorSPX = new WPI_VictorSPX(20);
   public final WPI_TalonSRX topShooterTalonSRX = new WPI_TalonSRX(21); // 21
   public final WPI_TalonSRX bottomShooterTalonSRX = new WPI_TalonSRX(22);
-  //public final Compressor pneumaticsCompressor = new Compressor(70);
-  //public final Solenoid preigniterSolenoid = new Solenoid(59);
+  public final DoubleSolenoid preigniterSolenoid = new DoubleSolenoid(0, 1);
   private double stsProportionalGain;
   private double stsIntegralGain;
   private double stsDerivativeGain;
@@ -124,6 +124,9 @@ public class Shooter extends SubsystemBase {
   public Shooter(Joystick driverJoystick) {
     this.driverJoystick = driverJoystick;
 
+    topShooterTalonSRX.configFactoryDefault();
+    bottomShooterTalonSRX.configFactoryDefault();
+
     getNewShuffleboardData();
     topShooterTalonSRX.config_kP(0, stsProportionalGain);
     bottomShooterTalonSRX.config_kP(0, stsProportionalGain);
@@ -131,9 +134,14 @@ public class Shooter extends SubsystemBase {
     bottomShooterTalonSRX.config_kI(0, stsIntegralGain);
     topShooterTalonSRX.config_kD(0, stsDerivativeGain);
     bottomShooterTalonSRX.config_kD(0, stsDerivativeGain);
+    topShooterTalonSRX.config_kF(0, 0.028);
+    bottomShooterTalonSRX.config_kF(0, 0.028);
     
+
+
     topShooterTalonSRX.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
     bottomShooterTalonSRX.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+  
 
     topShooterTalonSRX.setInverted(true);
     bottomShooterTalonSRX.setInverted(true);
@@ -142,7 +150,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-
+    System.out.println("Top shooter: " + bottomShooterTalonSRX.getSelectedSensorPosition());
     ntUpperTalonCurrentVelocity.forceSetDouble(convertEncoderCountstoRpm(topShooterTalonSRX.getSelectedSensorVelocity()));
     ntLowerTalonCurrentVelocity.forceSetDouble(convertEncoderCountstoRpm(bottomShooterTalonSRX.getSelectedSensorVelocity()));
     PIDCalibrations();
@@ -221,7 +229,7 @@ public class Shooter extends SubsystemBase {
     }
   }
 
-    public void setShooterSpeed()
+    /*public void setShooterSpeed()
     {
       if(driverJoystick.getRawAxis(1) > 0.1)
       {
@@ -234,7 +242,7 @@ public class Shooter extends SubsystemBase {
           shooterLowSpeed = true;
         }
       }
-    }
+    }*/
 
     public boolean getShooterHighSpeed()
     {
@@ -254,5 +262,20 @@ public class Shooter extends SubsystemBase {
     public double convertEncoderCountstoRpm(double encoderCounts)
     {
       return ( ( 10.0 * 60.0 ) / 4096 ) * encoderCounts;
+    }
+
+    public void setPreigniterSpeed(double speed)
+    {
+      preigniterVictorSPX.set(speed);
+    }
+
+    public void extendPreignitor()
+    {
+      preigniterSolenoid.set(Value.kForward);
+    }
+
+    public void retractPreignitor()
+    {
+      preigniterSolenoid.set(Value.kReverse);
     }
 }

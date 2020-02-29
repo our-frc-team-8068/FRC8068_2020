@@ -17,6 +17,7 @@ import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -34,7 +35,7 @@ public class ControlPanel extends SubsystemBase {
   private final Joystick operatorJoystick;
 
   private final WPI_VictorSPX controlPanelVictorSPX = new WPI_VictorSPX(40);    //40
-  private final I2C.Port controlPanelColorSensorI2CPort = I2C.Port.kOnboard; //This should be MXP but we changed it to work on QP
+  private final I2C.Port controlPanelColorSensorI2CPort = Port.kMXP; //This should be MXP but we changed it to work on QP
   private final ColorSensorV3 colorSensor = new ColorSensorV3(controlPanelColorSensorI2CPort);
   private boolean colorCalibrationEnabled = false;
   private ShuffleboardTab controlPanelColorTab = Shuffleboard.getTab("ControlPanelColor");

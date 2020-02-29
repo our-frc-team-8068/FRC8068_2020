@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -44,7 +45,7 @@ public class Magazine extends SubsystemBase {
 
   private final WPI_VictorSPX victorSPX = new WPI_VictorSPX(50);//50
   private final Encoder positionEncoder = new Encoder(Constants.DIO_MagazineEncoderBlueSignal, Constants.DIO_MagazineEncoderYellowSignal);
-  private final I2C.Port colorSensorI2CPort = I2C.Port.kOnboard;
+  private final I2C.Port colorSensorI2CPort = Port.kMXP;
   private final ColorSensorV3 colorSensor = new ColorSensorV3(colorSensorI2CPort);
   private ShuffleboardTab magazineControlTab = Shuffleboard.getTab("MagazineControl"); 
   private ShuffleboardTab magazineColorTab = Shuffleboard.getTab("MagazineColor");

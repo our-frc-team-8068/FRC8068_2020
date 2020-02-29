@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LogitechGamePad;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -37,19 +38,25 @@ public class DriveTrain extends SubsystemBase {
   public DriveTrain(Joystick driverJoystick ) {
   this.driverJoystick = driverJoystick;
 
+    rightDriveTalonSRX.configFactoryDefault();
     rightDriveTalonSRX.set(ControlMode.PercentOutput, 0);
     rightDriveTalonSRX.setInverted(true);
     rightDriveTalonSRX.setNeutralMode(NeutralMode.Brake);
+    rightDriveTalonSRX.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
     
     //rightDriveVictorSPX.set(ControlMode.Follower, rightDriveTalonSRX.getDeviceID());
+    rightDriveVictorSPX.configFactoryDefault();
     rightDriveVictorSPX.setNeutralMode(NeutralMode.Brake);
     rightDriveVictorSPX.setInverted(true);
 
+    leftDriveTalonSRX.configFactoryDefault();
     leftDriveTalonSRX.set(ControlMode.PercentOutput, 0);
     leftDriveTalonSRX.setInverted(false);
     leftDriveTalonSRX.setNeutralMode(NeutralMode.Brake);
+    leftDriveTalonSRX.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
     
     //leftDriveVictorSPX.set(ControlMode.Follower, leftDriveTalonSRX.getDeviceID());
+    leftDriveVictorSPX.configFactoryDefault();
     leftDriveVictorSPX.setNeutralMode(NeutralMode.Brake);
     leftDriveVictorSPX.setInverted(false);
 

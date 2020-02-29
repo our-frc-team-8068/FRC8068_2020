@@ -40,7 +40,6 @@ import frc.robot.subsystems.Vision;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
-
   //JoySticks
   private final Joystick driverJoystick = new Joystick(0);
   private final Joystick operatorJoystick = new Joystick(1); 
@@ -100,7 +99,7 @@ public class RobotContainer {
       LogitechGamePad.LEFT_BUMPER);
     final JoystickButton invertDriveButton = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_Y);
 
-    collectorCollectButton.whileHeld(new CmdCollectorCollect(magazine, collector));
+    collectorCollectButton.whileActiveOnce(new CmdCollectorCollect(magazine, collector));
     invertDriveButton.whenPressed(new CmdDriveTrainInvertDirection(driveTrain));
 
   }
