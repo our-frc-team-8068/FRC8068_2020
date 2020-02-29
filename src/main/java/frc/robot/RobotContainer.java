@@ -58,7 +58,7 @@ public class RobotContainer {
   private final Magazine magazine = new Magazine(driverJoystick);
   private final Shooter shooter = new Shooter(driverJoystick);
   private final ControlPanel controlPanel = new ControlPanel(operatorJoystick, driveTrain);
-  private final Vision vison = new Vision(driverJoystick);
+  private final Vision vision = new Vision(driverJoystick, operatorJoystick);
 
   //Commands
   private final ExampleCommand autoCommand = new ExampleCommand(exampleSubsystem);

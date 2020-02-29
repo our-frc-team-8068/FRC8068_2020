@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoMode;
 import edu.wpi.cscore.VideoSink;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -17,6 +18,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LogitechGamePad;
+import frc.robot.LogitechJoystick;
 
 public class Vision extends SubsystemBase {
   /**
@@ -25,23 +27,30 @@ public class Vision extends SubsystemBase {
   private ShuffleboardTab driverInformationCenterTab = Shuffleboard.getTab("DriverInformationCenter"); 
   private NetworkTableEntry cameraSelection;
   private final Joystick driverJoystick;
+  private final Joystick operatorJoystick;
 
   private UsbCamera shootCamera;
   private UsbCamera controlPanelCamera;
   private VideoSink server;
+  private VideoMode shootVideoMode = new VideoMode(VideoMode.PixelFormat.kMJPEG, 320, 240, 15);
 
-  public Vision(Joystick driverJoystick) {
+  private boolean switchCameras = false;
+
+  public Vision(Joystick driverJoystick, Joystick operatorJoystick) {
     this.driverJoystick = driverJoystick;
-    shootCamera = CameraServer.getInstance().startAutomaticCapture(0);
-    shootCamera.setResolution(320, 240);
-    shootCamera.setFPS(15);
-    
-    controlPanelCamera = CameraServer.getInstance().startAutomaticCapture(1);
+    this.operatorJoystick = operatorJoystick;
+    shootCamera = CameraServer.getInstance().startAutomaticCapture("Shooter Camera", 0);
+    //shootCamera.setVideoMode(VideoMode.PixelFormat.kMJPEG, 176, 144, 30);
+    shootCamera.setVideoMode(shootVideoMode);
+    //shootCamera.setResolution(320, 240);
+    //shootCamera.setFPS(15);
+    controlPanelCamera = CameraServer.getInstance().startAutomaticCapture("Control Panel Camera", 1);
+    //controlPanelCamera.setVideoMode(VideoMode.PixelFormat.kMJPEG, 320, 240, 15);
     controlPanelCamera.setResolution(320, 240);
     controlPanelCamera.setFPS(15);
-    
+
     server = CameraServer.getInstance().getServer();
-    //server.setSource(shootCamera);
+    
     cameraSelection = NetworkTableInstance.getDefault().getTable("CameraPublisher").getEntry(
       "USB Camera 1"); 
 
@@ -52,14 +61,17 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    if (driverJoystick.getPOV() == 0) 
+    if (operatorJoystick.getRawButtonPressed(LogitechJoystick.BUTTON_3)) 
     {
-      server.setSource(shootCamera); 
+      switchCameras = !switchCameras;
     }
-    else if (driverJoystick.getPOV() == 90)
+    if (switchCameras)
     {
       server.setSource(controlPanelCamera); 
-       
+    }
+    else
+    {
+      server.setSource(shootCamera); 
     }
   }
 }
