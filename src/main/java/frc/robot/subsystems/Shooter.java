@@ -35,6 +35,7 @@ public class Shooter extends SubsystemBase {
   private double stsProportionalGain;
   private double stsIntegralGain;
   private double stsDerivativeGain;
+  private double stsFeedForward;
   public double stsShooterUpperShooterHighSpeed;
   public double stsShooterLowerShooterHighSpeed;
   public double stsShooterUpperShooterLowSpeed;
@@ -74,6 +75,16 @@ public class Shooter extends SubsystemBase {
   
   private NetworkTableEntry ntStsDerivativeGain = 
     shooterControlTab.addPersistent("StsShooterDerivativeGain ", 69.0).withSize(1, 1).withPosition(3, 2).getEntry();
+
+  private NetworkTableEntry ntScdFeedForward =
+    shooterControlTab.add("ScdShooterFeedFoward", 69.0).withSize(2, 1).withPosition(0, 3).getEntry();
+
+  private NetworkTableEntry ntScdUpdateFeedFoward = 
+    shooterControlTab.add("ScdShooterUpdateFeedFoward", false)
+      .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(2, 3).getEntry();
+
+  private NetworkTableEntry ntStsFeedForward = 
+    shooterControlTab.add("StsShooterFeedFoward", 69.0).withSize(1, 1).withPosition(3, 3).getEntry();
 
   private NetworkTableEntry ntScdUpperShooterHighSpeed = 
     shooterControlTab.add("ScdShooterUpperShooterHighSpeed", 69.0).withSize(2, 1).withPosition(5, 0).getEntry();
@@ -164,6 +175,7 @@ public class Shooter extends SubsystemBase {
     stsProportionalGain = ntStsProportionalGain.getDouble(69.0);
     stsIntegralGain = ntStsIntegralGain.getDouble(69.0);
     stsDerivativeGain = ntStsDerivativeGain.getDouble(69.0);
+    stsFeedForward = ntStsFeedForward.getDouble(69.0);
 
     stsShooterUpperShooterHighSpeed = ntScdUpperShooterHighSpeed.getDouble(69.0);
     stsShooterLowerShooterHighSpeed = ntScdLowerShooterHighSpeed.getDouble(69.0);
@@ -198,6 +210,15 @@ public class Shooter extends SubsystemBase {
       ntScdUpdateDerivativeGain.setBoolean(false);
       topShooterTalonSRX.config_kD(0, stsDerivativeGain);
       bottomShooterTalonSRX.config_kD(0, stsDerivativeGain);
+    }
+
+    if(ntScdUpdateFeedFoward.getBoolean(false))
+    {
+      stsFeedForward = ntScdFeedForward.getDouble(69.0);
+      ntStsFeedForward.forceSetDouble(stsFeedForward);
+      ntScdUpdateFeedFoward.setBoolean(false);
+      topShooterTalonSRX.config_kF(0, stsFeedForward);
+      bottomShooterTalonSRX.config_kF(0, stsFeedForward);
     }
 
     if(ntScdUpdateUpperShooterHighSpeed.getBoolean(false))
