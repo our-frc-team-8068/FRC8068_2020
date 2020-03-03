@@ -12,8 +12,9 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
+/* NON-OPERATIONAL SENSOR
 import com.revrobotics.ColorSensorV3;
-
+*/
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
@@ -36,7 +37,9 @@ public class ControlPanel extends SubsystemBase {
 
   private final WPI_VictorSPX controlPanelVictorSPX = new WPI_VictorSPX(40);    //40
   private final I2C.Port controlPanelColorSensorI2CPort = Port.kMXP; //This should be MXP but we changed it to work on QP
+  /* NON-OPERATIONAL SENSOR
   private final ColorSensorV3 colorSensor = new ColorSensorV3(controlPanelColorSensorI2CPort);
+  */
   private boolean colorCalibrationEnabled = false;
   private ShuffleboardTab controlPanelColorTab = Shuffleboard.getTab("ControlPanelColor");
   private ShuffleboardTab controlPanelControlTab = Shuffleboard.getTab("ControlPanelControl");
@@ -171,13 +174,17 @@ public class ControlPanel extends SubsystemBase {
 
   @Override
   public void periodic() {
+    /* NON-OPERATIONAL SENSOR
     ntControlPanelColorSensorCurrentRed.forceSetDouble(colorSensor.getColor().red);
     ntControlPanelColorSensorCurrentGreen.forceSetDouble(colorSensor.getColor().green);
     ntControlPanelColorSensorCurrentBlue.forceSetDouble(colorSensor.getColor().blue);
+    */
 
     colorCalibrationEnabled = ntColorCalibrationEnabled.getBoolean(false);
 
-    colorMatchResult = colorMatcher.matchClosestColor(colorSensor.getColor()); 
+    /* NON-OPERATIONAL SENSOR
+    colorMatchResult = colorMatcher.matchClosestColor(colorSensor.getColor());
+    */
 
     if(colorMatchResult.color == kRedTarget)
     {
@@ -229,10 +236,12 @@ public class ControlPanel extends SubsystemBase {
     controlPanelVictorSPX.set(ControlMode.PercentOutput, speed);
   } 
 
+  /* NON-OPERATIONAL SENSOR
   public Color getColorSensorColor()
   {
-    return colorSensor.getColor();
+    return colorSensor.getColor(); 
   }
+  */
   
   private void getNewShuffleboardData()
   {
@@ -265,16 +274,19 @@ public class ControlPanel extends SubsystemBase {
 
   private void colorCalibration()
   {
+    /* NON-OPERATIONAL SENSOR
     Color detectedColor = colorSensor.getColor();
+    */
 
     if(ntRedColorCalibration.getBoolean(false))
     {
       if(colorCalibrationEnabled)
       {
+        /* NON-OPERATIONAL SENSOR
         kRedTargetRedValue = detectedColor.red;
         kRedTargetGreenValue = detectedColor.green;
         kRedTargetBlueValue = detectedColor.blue;
-
+        */
         ntRedRValue.forceSetDouble(kRedTargetRedValue);
         ntRedGValue.forceSetDouble(kRedTargetGreenValue);
         ntRedBValue.forceSetDouble(kRedTargetBlueValue);
@@ -291,10 +303,11 @@ public class ControlPanel extends SubsystemBase {
     {
       if(colorCalibrationEnabled)
       {
+        /* NON-OPERATIONAL SENSOR
         kGreenTargetRedValue = detectedColor.red;
         kGreenTargetGreenValue = detectedColor.green;
         kGreenTargetBlueValue = detectedColor.blue; 
-
+        */
         ntGreenRValue.forceSetDouble(kGreenTargetRedValue);
         ntGreenGValue.forceSetDouble(kGreenTargetGreenValue);
         ntGreenBValue.forceSetDouble(kGreenTargetBlueValue);
@@ -311,10 +324,11 @@ public class ControlPanel extends SubsystemBase {
     {
       if(colorCalibrationEnabled)
       {
+        /* NON-OPERATIONAL SENSOR
         kBlueTargetRedValue = detectedColor.red;
         kBlueTargetGreenValue = detectedColor.green;
         kBlueTargetBlueValue = detectedColor.blue;
-
+        */
         ntBlueRValue.forceSetDouble(kBlueTargetRedValue);
         ntBlueGValue.forceSetDouble(kBlueTargetGreenValue);
         ntBlueBValue.forceSetDouble(kBlueTargetBlueValue);
@@ -331,10 +345,11 @@ public class ControlPanel extends SubsystemBase {
     {
       if(colorCalibrationEnabled)
       {
+        /* NON-OPERATIONAL SENSOR
         kYellowTargetRedValue = detectedColor.red;
         kYellowTargetGreenValue = detectedColor.green;
         kYellowTargetBlueValue = detectedColor.blue;
-
+        */
         ntYellowRValue.forceSetDouble(kYellowTargetRedValue);
         ntYellowGValue.forceSetDouble(kYellowTargetGreenValue);
         ntYellowBValue.forceSetDouble(kYellowTargetBlueValue);

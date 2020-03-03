@@ -67,9 +67,9 @@ public class CmdControlPanelRotateTurns extends CommandBase {
     controlPanelColorMatcher.addColorMatch(kGreenTarget);
     controlPanelColorMatcher.addColorMatch(kRedTarget);
     controlPanelColorMatcher.addColorMatch(kYellowTarget);
-
+    /* NON-OPERATIONAL SENSOR
     currentColor = controlPanelColorMatcher.matchClosestColor(controlPanel.getColorSensorColor());
-    
+    */
     if (currentColor.color == kGreenTarget)
     {
       targetColor = kGreenTarget;
@@ -93,7 +93,9 @@ public class CmdControlPanelRotateTurns extends CommandBase {
   public void execute() {
     System.out.println("Initial Target Color " + targetColor);
     controlPanel.setControlPanelSpeed(controlPanelMotorSpeed);
+    /* NON-OPERATIONAL SENSOR
     currentColor = controlPanelColorMatcher.matchClosestColor(controlPanel.getColorSensorColor());
+    */
     //System.out.println("Color Counts " + colorCount);
     System.out.println("OnColorTarget " + onTargetColor);
 
