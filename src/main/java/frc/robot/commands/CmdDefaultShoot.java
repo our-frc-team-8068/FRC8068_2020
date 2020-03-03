@@ -79,7 +79,6 @@ public class CmdDefaultShoot extends CommandBase {
     }
     else
     {
-      System.out.println("top setpoint : " + topShooterSpeed + ", lower setpoint : " + bottomShooterSpeed);
       shooter.topShooterTalonSRX.set(ControlMode.Velocity, topShooterSpeed);
       shooter.bottomShooterTalonSRX.set(ControlMode.Velocity, bottomShooterSpeed);
       shooter.setPreigniterSpeed(0.75);

@@ -22,6 +22,10 @@ public class CmdDefaultControlPanel extends CommandBase {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final Joystick operatorJoystick;
   private final ControlPanel controlPanel;
+
+  private boolean firstScan = true;
+  private double delayTime = 0.0;
+  private double offsetTime = 0.5;
   /**
    * Creates a new ExampleCommand.
    *
@@ -37,6 +41,7 @@ public class CmdDefaultControlPanel extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    firstScan = true;
 
   }
 
@@ -53,18 +58,41 @@ public class CmdDefaultControlPanel extends CommandBase {
     {
       // Checks if both the Left Y Axis and Right X Axis are greater than 0.
       // If true moves on to check which quadrent the magnitude value is in.
-      if (operatorJoystick.getRawAxis(LogitechJoystick.TWIST_AXIS) < 0) 
+      if (operatorJoystick.getRawAxis(LogitechJoystick.TWIST_AXIS) > 0) 
       {
         controlPanel.setControlPanelSpeed(twistAxisMagnitude);
+        firstScan = true;
       }
       else
       {
-        controlPanel.setControlPanelSpeed(-twistAxisMagnitude);
+        if(firstScan)
+        {
+          delayTime = Timer.getFPGATimestamp() + offsetTime;
+          firstScan = false;
+        }
+
+        if(Timer.getFPGATimestamp() < delayTime)
+        {
+          controlPanel.setControlPanelSpeed(-twistAxisMagnitude);
+        }
       }
     }
     else
     {
-      controlPanel.setControlPanelSpeed(0.0);
+      if(firstScan)
+      {
+        delayTime = Timer.getFPGATimestamp() + offsetTime;
+        firstScan = false;
+      }
+
+      if(Timer.getFPGATimestamp() < delayTime)
+      {
+        controlPanel.setControlPanelSpeed(-0.5);
+      }
+      else
+      {
+        controlPanel.setControlPanelSpeed(0.0);
+      }
     }
   }
 

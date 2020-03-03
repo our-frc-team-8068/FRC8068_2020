@@ -81,10 +81,10 @@ public class Shooter extends SubsystemBase {
 
   private NetworkTableEntry ntScdUpdateFeedFoward = 
     shooterControlTab.add("ScdShooterUpdateFeedFoward", false)
-      .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(2, 3).getEntry();
+      .withWidget(BuiltInWidgets.kToggleButton).withSize(1, 1).withPosition(2, 3).getEntry();
 
   private NetworkTableEntry ntStsFeedForward = 
-    shooterControlTab.add("StsShooterFeedFoward", 69.0).withSize(1, 1).withPosition(3, 3).getEntry();
+    shooterControlTab.addPersistent("StsShooterFeedFoward", 69.0).withSize(1, 1).withPosition(3, 3).getEntry();
 
   private NetworkTableEntry ntScdUpperShooterHighSpeed = 
     shooterControlTab.add("ScdShooterUpperShooterHighSpeed", 69.0).withSize(2, 1).withPosition(5, 0).getEntry();
@@ -145,8 +145,8 @@ public class Shooter extends SubsystemBase {
     bottomShooterTalonSRX.config_kI(0, stsIntegralGain);
     topShooterTalonSRX.config_kD(0, stsDerivativeGain);
     bottomShooterTalonSRX.config_kD(0, stsDerivativeGain);
-    topShooterTalonSRX.config_kF(0, 0.028);
-    bottomShooterTalonSRX.config_kF(0, 0.028);
+    topShooterTalonSRX.config_kF(0, stsFeedForward);
+    bottomShooterTalonSRX.config_kF(0, stsFeedForward);
     
 
 
@@ -161,7 +161,6 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    System.out.println("Top shooter: " + bottomShooterTalonSRX.getSelectedSensorPosition());
     ntUpperTalonCurrentVelocity.forceSetDouble(convertEncoderCountstoRpm(topShooterTalonSRX.getSelectedSensorVelocity()));
     ntLowerTalonCurrentVelocity.forceSetDouble(convertEncoderCountstoRpm(bottomShooterTalonSRX.getSelectedSensorVelocity()));
     PIDCalibrations();

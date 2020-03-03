@@ -32,6 +32,9 @@ public class Arm extends SubsystemBase {
   public Arm(Joystick driverJoystick, Joystick operatorJoystick) {
     this.driverJoystick = driverJoystick;
     this.operatorJoystick = operatorJoystick;
+
+    leftWinchVictorSPX.configFactoryDefault();
+    leftWinchVictorSPX.setInverted(true);
     
 
   }

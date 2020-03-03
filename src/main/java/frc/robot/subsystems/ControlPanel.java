@@ -140,6 +140,9 @@ public class ControlPanel extends SubsystemBase {
     
   public ControlPanel(Joystick operatorJoystick, DriveTrain driveTrain) {
     this.operatorJoystick = operatorJoystick;
+    controlPanelVictorSPX.configFactoryDefault();
+    controlPanelVictorSPX.setInverted(true);
+    
     getNewShuffleboardData();
 
     kRedTarget = new Color(new Color8Bit((int) (kRedTargetRedValue * 255), (int) (kRedTargetGreenValue * 255), (int) (kRedTargetBlueValue * 255)));

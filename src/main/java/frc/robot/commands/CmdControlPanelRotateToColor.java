@@ -87,34 +87,18 @@ public class CmdControlPanelRotateToColor extends CommandBase {
     if (targetColorChar == 'Y')
     {
       targetColor = controlPanel.getKGreenTarget();
-      if(controlPanel.colorIsBlue())
-      {
-        invertDirection = true;
-      }
     }
     else if (targetColorChar == 'G')
     {
       targetColor = controlPanel.getKYellowTarget();
-      if(controlPanel.colorIsRed())
-      {
-        invertDirection = true;
-      }
     }
     else if (targetColorChar == 'B')
     {
       targetColor = controlPanel.getKRedTarget();
-      if(controlPanel.colorIsGreen())
-      {
-        invertDirection = true;
-      }
     }
     else if (targetColorChar == 'R')
     {
       targetColor = controlPanel.getKBlueTarget();
-      if(controlPanel.colorIsYellow())
-      {
-        invertDirection = true;
-      }
     }
     else
     {
@@ -128,14 +112,9 @@ public class CmdControlPanelRotateToColor extends CommandBase {
     if (targetColor != controlPanel.getColorMatcherColor()) 
     {
       endtime = Timer.getFPGATimestamp() + verificationTimeoutTime;
-      if(invertDirection)
-      {
-        controlPanel.setControlPanelSpeed(-controlPanelMotorSpeed);
-      }
-      else
-      {
-        controlPanel.setControlPanelSpeed(controlPanelMotorSpeed);
-      }
+     
+      controlPanel.setControlPanelSpeed(controlPanelMotorSpeed);
+      
     }
     else
     {
