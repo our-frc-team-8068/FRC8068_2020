@@ -54,6 +54,24 @@ public class CmdDefaultControlPanel extends CommandBase {
     double twistAxisMagnitude = Utilities.analogScaling(deadband, 1.0, 0.0, 1.0, true,
         Math.abs(operatorJoystick.getRawAxis(LogitechJoystick.TWIST_AXIS)));
 
+        if (twistAxisMagnitude > 0) 
+        {
+          // Checks if both the Left Y Axis and Right X Axis are greater than 0.
+          // If true moves on to check which quadrent the magnitude value is in.
+          if (operatorJoystick.getRawAxis(LogitechJoystick.TWIST_AXIS) < 0) 
+          {
+            controlPanel.setControlPanelSpeed(twistAxisMagnitude);
+          }
+          else
+          {
+            controlPanel.setControlPanelSpeed(-twistAxisMagnitude);
+          }
+        }
+        else
+        {
+          controlPanel.setControlPanelSpeed(0.0);
+        }
+    /* NON-OPERATIONAL SENSOR - Code was Mostly Untested - Causing a Delay Before Operator Can Turn CP Sensor Backwards
     if (twistAxisMagnitude > 0) 
     {
       // Checks if both the Left Y Axis and Right X Axis are greater than 0.
@@ -93,7 +111,7 @@ public class CmdDefaultControlPanel extends CommandBase {
       {
         controlPanel.setControlPanelSpeed(0.0);
       }
-    }
+    } */
   }
 
   // Called once the command ends or is interrupted.
