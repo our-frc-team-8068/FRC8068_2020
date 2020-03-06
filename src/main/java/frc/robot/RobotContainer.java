@@ -65,7 +65,7 @@ public class RobotContainer {
   private final CmdDefaultMagazinePosition cmdDefaultMagazinePosition = new CmdDefaultMagazinePosition(magazine);
   private final CmdMagazineHomeEncoder cmdMagazineHomeEncoder = new CmdMagazineHomeEncoder(magazine);
   private final CmdDefaultCollector cmdDefaultCollector = new CmdDefaultCollector(collector, driverJoystick);
-  private final CmdDefaultShoot cmdDefaultShoot = new CmdDefaultShoot(shooter, magazine, driverJoystick);
+  private final CmdDefaultShoot cmdDefaultShoot = new CmdDefaultShoot(shooter, driverJoystick);
   private final CmdDefaultControlPanel cmdDefaultControlPanel = new CmdDefaultControlPanel(operatorJoystick, controlPanel);
 
   /**

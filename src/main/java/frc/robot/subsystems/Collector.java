@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Joystick;
@@ -30,6 +31,9 @@ public class Collector extends SubsystemBase {
   private final WPI_VictorSPX collectorVictorSPX = new WPI_VictorSPX(45);
   private final DoubleSolenoid collectorDeploymentSolenoid = new DoubleSolenoid(Constants.DIO_CollectorCylinderExtend,
     Constants.DIO_CollectorCYlinderRetract);
+
+  private AnalogInput ballsensor = new AnalogInput(2);
+  private int sensorThresholdForBallPresent = 2200;
 
   private double collectorSpeed;
 
@@ -61,6 +65,8 @@ public class Collector extends SubsystemBase {
       ntScdUpdateSpeed.setBoolean(false);
     }
 
+    System.out.println("Collector sensor: " + isBallPresent());
+
   }
 
   public void collect(double speed)
@@ -77,6 +83,10 @@ public class Collector extends SubsystemBase {
   public void retractCollectorCylinder()
   {
     collectorDeploymentSolenoid.set(Value.kReverse);
+  }
 
+  public boolean isBallPresent()
+  {
+    return ballsensor.getValue() > sensorThresholdForBallPresent;
   }
 }

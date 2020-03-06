@@ -20,7 +20,7 @@ public class CmdMagazineHomeEncoder extends CommandBase {
    */
 
   private final Magazine magazine;
-  private double slowHomeSpeed = 0.05;
+  private double slowHomeSpeed = 0.1;
 
   public CmdMagazineHomeEncoder(Magazine magazine)
     {
@@ -53,15 +53,23 @@ public class CmdMagazineHomeEncoder extends CommandBase {
       magazine.zeroEncoder();
       magazine.setSetpointDegrees(0);
       magazine.setHasHomed(true);
+      System.out.println("magazine home end: " + interrupted);
     }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() 
     {      
-      if(magazine.colorIsRed() || magazine.colorIsYellow())
+      if(magazine.colorIsRed())
       {
-        //System.out.println("Red or Yellow");
+        System.out.println("Red");
+        magazine.setHomedToShootPosition(true);
+        return true;
+      }
+      else if(magazine.colorIsYellow())
+      {
+        System.out.println("Yellow");
+        magazine.setHomedToShootPosition(false);
         return true;
       }
       else

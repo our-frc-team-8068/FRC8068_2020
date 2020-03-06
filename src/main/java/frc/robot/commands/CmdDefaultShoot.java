@@ -25,7 +25,6 @@ public class CmdDefaultShoot extends CommandBase {
   /**
    * Creates a new CmdDefaultShooterShoot.
    */
-  private final Magazine magazine;
   private final Shooter shooter;
   private final Joystick driverJoystick;
 
@@ -37,13 +36,12 @@ public class CmdDefaultShoot extends CommandBase {
   double bottomShooterSpeed;
   double topShooterSpeed;
 
-  public CmdDefaultShoot(Shooter shooter, Magazine magazine, Joystick driverJoystick) {
+  public CmdDefaultShoot(Shooter shooter, Joystick driverJoystick) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.magazine = magazine;
     this.shooter = shooter;
     this.driverJoystick = driverJoystick;
     
-    addRequirements(shooter, magazine);
+    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.

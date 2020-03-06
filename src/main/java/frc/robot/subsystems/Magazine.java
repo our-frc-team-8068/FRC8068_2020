@@ -41,11 +41,12 @@ public class Magazine extends SubsystemBase {
   private double stsProportionalGain;
   private double stsIntegralGain;
   private double stsDerivativeGain;
+  private double homedOffset = 36.0;
   private boolean scdUpdatePositionSetpoint = false;
 
   private final WPI_VictorSPX victorSPX = new WPI_VictorSPX(50);//50
   private final Encoder positionEncoder = new Encoder(Constants.DIO_MagazineEncoderBlueSignal, Constants.DIO_MagazineEncoderYellowSignal);
-  private final I2C.Port colorSensorI2CPort = Port.kMXP;
+  private final I2C.Port colorSensorI2CPort = Port.kOnboard;
   private final ColorSensorV3 colorSensor = new ColorSensorV3(colorSensorI2CPort);
   private ShuffleboardTab magazineControlTab = Shuffleboard.getTab("MagazineControl"); 
   private ShuffleboardTab magazineColorTab = Shuffleboard.getTab("MagazineColor");
@@ -54,6 +55,7 @@ public class Magazine extends SubsystemBase {
   private boolean colorIsYellow = false;
   private boolean colorIsLexan = false;
   private boolean colorCalibrationEnabled = false;
+  private boolean homedToShootPostion = false;
 
   private ComplexWidget ntHomeEncoder = magazineControlTab.add("ScdHomeMagazine", new CmdMagazineHomeEncoder(this)).withSize(2, 1).withPosition(0, 0);
   private NetworkTableEntry ntHasHomed = magazineControlTab.add("StsMagazineHasHomed", hasHomed).withSize(2, 1).withPosition(2, 0).getEntry();
@@ -255,7 +257,14 @@ public class Magazine extends SubsystemBase {
 
   public void setSetpointDegrees(double degrees)
   {
-    setpointDegrees = degrees;
+    if(!homedToShootPostion)
+    {
+      setpointDegrees = degrees;
+    }
+    else
+    {
+      setpointDegrees = degrees - homedOffset;
+    }
   }
 
   /*public int convertDegreesToEncoderCounts(double degrees)
@@ -266,7 +275,14 @@ public class Magazine extends SubsystemBase {
 
   public double getPositionInDegrees()
   {
-    return (positionEncoder.getRaw() % 8192) * (360.0 / 8192);
+    if(!homedToShootPostion)
+    {
+      return (positionEncoder.getRaw() % 8192) * (360.0 / 8192);
+    }
+    else
+    {
+      return (positionEncoder.getRaw() % 8192) * (360.0 / 8192) + homedOffset;
+    }
   }
 
   public boolean getHasHomed() 
@@ -430,6 +446,11 @@ public class Magazine extends SubsystemBase {
       ntScdUpdateDerivativeGain.setBoolean(false);
     }
 
+  }
+
+  public void setHomedToShootPosition(boolean position)
+  {
+    homedToShootPostion = position;
   }
 }
 

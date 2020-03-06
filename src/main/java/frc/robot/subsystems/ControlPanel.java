@@ -186,7 +186,7 @@ public class ControlPanel extends SubsystemBase {
     colorMatchResult = colorMatcher.matchClosestColor(colorSensor.getColor());
     */
 
-    if(colorMatchResult.color == kRedTarget)
+    /*if(colorMatchResult.color == kRedTarget)
     {
       colorIsRed = true;
       colorIsGreen = false;
@@ -223,7 +223,7 @@ public class ControlPanel extends SubsystemBase {
     colorCalibration();
 
     numberOfTurnsToRotate = ntScdNumberOfTurnsToRotate.getDouble(69.0);
-    ntStsNumberOfTurnsToRotate.forceSetDouble(numberOfTurnsToRotate);
+    ntStsNumberOfTurnsToRotate.forceSetDouble(numberOfTurnsToRotate);*/
   }
 
   public double getNumberOfTurnsToRotate()
