@@ -32,7 +32,8 @@ public class Collector extends SubsystemBase {
   private final Joystick operatorJoystick;
   private final Magazine magazine;
   
-  private final WPI_VictorSPX collectorVictorSPX = new WPI_VictorSPX(45);
+  private final WPI_VictorSPX frontVictorSPX = new WPI_VictorSPX(45);
+  private final WPI_VictorSPX backVictorSPX = new WPI_VictorSPX(46);
   private final DoubleSolenoid collectorDeploymentSolenoid = new DoubleSolenoid(Constants.DIO_CollectorCylinderExtend,
     Constants.DIO_CollectorCYlinderRetract);
 
@@ -63,6 +64,9 @@ public class Collector extends SubsystemBase {
     this.operatorJoystick = operatorJoystick;
     this.magazine = magazine;
 
+    backVictorSPX.configFactoryDefault();
+    backVictorSPX.setInverted(true);
+
     ntCmdNextCollectIndex = collectorControlTab.add("CmdNextCollectIndex", new CmdMagazineNextCollectIndex(magazine))
     .withSize(2, 1).withPosition(0, 1);
     ntCmdPreviousCollectIndex = collectorControlTab.add("CmdPreviousCollectIndex", new CmdMagazinePreviousCollectIndex(magazine))
@@ -84,9 +88,10 @@ public class Collector extends SubsystemBase {
     ntStsAtCollectPosition.forceSetBoolean(magazine.isAtCollectIndex());
   }
 
-  public void collect(double speed)
+  public void collect(double frontSpeed, double backSpeed)
   {
-    collectorVictorSPX.set(speed);
+    frontVictorSPX.set(frontSpeed);
+    backVictorSPX.set(backSpeed); //weak motor, so send full speed
   }
 
   public void extendCollectorCylinder()

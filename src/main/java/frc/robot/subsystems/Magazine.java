@@ -488,7 +488,7 @@ public class Magazine extends SubsystemBase {
 
     if(getSetpointInDegrees() >= 358.0 || getSetpointInDegrees() < 2.0)
     {
-      return (getSetpointInDegrees() >= 358.0 || getSetpointInDegrees() < 2.0);
+      return (getPositionInDegrees() >= 358.0 || getPositionInDegrees() < 2.0);
     }
     else
     {

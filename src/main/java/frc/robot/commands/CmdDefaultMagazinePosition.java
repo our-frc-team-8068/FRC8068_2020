@@ -56,7 +56,6 @@ double output;
     output = pid.calculate(magazine.getPositionInDegrees(), magazine.getSetpointInDegrees());
     magazine.setSpeed(output);
 
-    System.out.println("At setpoint: " + pid.atSetpoint() + " Error: " + pid.getPositionError() + " Output : " + output);
   }
 
   // Called once the command ends or is interrupted.

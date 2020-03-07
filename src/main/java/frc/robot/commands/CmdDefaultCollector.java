@@ -58,6 +58,7 @@ public class CmdDefaultCollector extends CommandBase {
         if(collector.isBallPresent())
         {
           magazine.nextCollectIndex();
+          System.out.println("Ball at : " + magazine.getPositionInDegrees());
         }
         else
         {
@@ -70,7 +71,7 @@ public class CmdDefaultCollector extends CommandBase {
 
           if(Timer.getFPGATimestamp() > delayTime)
           {
-            collector.collect(0.75);
+            collector.collect(0.75, 0.8);
           }
         }
       }
@@ -93,7 +94,7 @@ public class CmdDefaultCollector extends CommandBase {
       }
       firstScanButtonPress = true;
       firstScanTimerOffset = true;
-      collector.collect(0.0);
+      collector.collect(0.0, 0.0);
       collector.retractCollectorCylinder();
     }
   }

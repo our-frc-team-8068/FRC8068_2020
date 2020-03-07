@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.CmdCollectorCollect;
 import frc.robot.commands.CmdDefaultCollector;
 import frc.robot.commands.CmdDefaultControlPanel;
 import frc.robot.commands.CmdDefaultJoystickDrive;
@@ -65,7 +64,7 @@ public class RobotContainer {
   private final CmdDefaultMagazinePosition cmdDefaultMagazinePosition = new CmdDefaultMagazinePosition(magazine);
   private final CmdMagazineHomeEncoder cmdMagazineHomeEncoder = new CmdMagazineHomeEncoder(magazine);
   private final CmdDefaultCollector cmdDefaultCollector = new CmdDefaultCollector(collector, driverJoystick, magazine);
-  private final CmdDefaultShoot cmdDefaultShoot = new CmdDefaultShoot(shooter, driverJoystick);
+  private final CmdDefaultShoot cmdDefaultShoot = new CmdDefaultShoot(shooter, magazine, driverJoystick);
   private final CmdDefaultControlPanel cmdDefaultControlPanel = new CmdDefaultControlPanel(operatorJoystick, controlPanel);
 
   /**
@@ -99,7 +98,6 @@ public class RobotContainer {
       LogitechGamePad.LEFT_BUMPER);
     final JoystickButton invertDriveButton = new JoystickButton(driverJoystick, LogitechGamePad.BUTTON_Y);
 
-    collectorCollectButton.whileActiveOnce(new CmdCollectorCollect(magazine, collector));
     invertDriveButton.whenPressed(new CmdDriveTrainInvertDirection(driveTrain));
 
   }

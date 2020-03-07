@@ -10,6 +10,7 @@ package frc.robot.commands;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.LogitechGamePad;
@@ -27,6 +28,7 @@ public class CmdDefaultShoot extends CommandBase {
    */
   private final Shooter shooter;
   private final Joystick driverJoystick;
+  private final Magazine magazine;
 
   double defaultShooterTopShooterPercentage = 1.0;
   double defaultShooterBottomShooterPercentage = 1.0;
@@ -35,11 +37,16 @@ public class CmdDefaultShoot extends CommandBase {
 
   double bottomShooterSpeed;
   double topShooterSpeed;
+  double shooterDelayTime;
 
-  public CmdDefaultShoot(Shooter shooter, Joystick driverJoystick) {
+  boolean firstScanButtonPress = true;
+  boolean firstScanTimer;
+
+  public CmdDefaultShoot(Shooter shooter, Magazine magazine, Joystick driverJoystick) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
     this.driverJoystick = driverJoystick;
+    this.magazine = magazine;
     
     addRequirements(shooter);
   }
@@ -53,7 +60,55 @@ public class CmdDefaultShoot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(driverJoystick.getRawAxis(LogitechGamePad.RIGHT_TRIGGER) >= shootHighTriggerPosition)
+    if(driverJoystick.getRawAxis(LogitechGamePad.RIGHT_TRIGGER) > 0)
+    {
+      if(firstScanButtonPress)
+      {
+        magazine.nextShootIndex();
+        shooter.retractPreignitor();
+        firstScanTimer = true;
+        firstScanButtonPress = false;
+      }
+      
+      if(magazine.onTarget())
+      {
+        shooter.extendPreignitor();
+        shooter.setPreigniterSpeed(0.5);
+        if(firstScanTimer)
+        {
+          shooterDelayTime = Timer.getFPGATimestamp() + 0.5;
+          firstScanTimer = false;
+        }
+
+        if(driverJoystick.getRawAxis(LogitechGamePad.RIGHT_TRIGGER) >= shootHighTriggerPosition)
+        {
+          shooter.bottomShooterTalonSRX.set(ControlMode.Velocity, shooter.convertRpmToEncoderCounts(shooter.stsShooterLowerShooterHighSpeed));
+          shooter.topShooterTalonSRX.set(ControlMode.Velocity, shooter.convertRpmToEncoderCounts(shooter.stsShooterUpperShooterHighSpeed));
+        }
+        else if(driverJoystick.getRawAxis(LogitechGamePad.RIGHT_TRIGGER) >= shootLowTriggerPosition)
+        {
+          shooter.bottomShooterTalonSRX.set(ControlMode.Velocity, shooter.convertRpmToEncoderCounts(shooter.stsShooterLowerShooterLowSpeed));
+          shooter.topShooterTalonSRX.set(ControlMode.Velocity, shooter.convertRpmToEncoderCounts(shooter.stsShooterUpperShooterLowSpeed));
+        }
+      }
+
+      if(magazine.onTarget() && Timer.getFPGATimestamp() > shooterDelayTime)
+      {
+        shooter.retractPreignitor();
+        magazine.nextShootIndex();
+        firstScanTimer = true;
+      }
+      
+    }
+    else
+    {
+      shooter.topShooterTalonSRX.set(ControlMode.PercentOutput, 0.0);
+      shooter.bottomShooterTalonSRX.set(ControlMode.PercentOutput, 0.0);
+      shooter.extendPreignitor();
+      shooter.setPreigniterSpeed(0.0);
+    }
+
+    /*if(driverJoystick.getRawAxis(LogitechGamePad.RIGHT_TRIGGER) >= shootHighTriggerPosition)
     {
       bottomShooterSpeed = shooter.convertRpmToEncoderCounts(shooter.stsShooterLowerShooterHighSpeed);
       topShooterSpeed = shooter.convertRpmToEncoderCounts(shooter.stsShooterUpperShooterHighSpeed);
@@ -86,7 +141,7 @@ public class CmdDefaultShoot extends CommandBase {
     //shooter.topShooterTalonSRX.set(ControlMode.PercentOutput, defaultShooterTopShooterPercentage);
     //shooter.bottomShooterTalonSRX.set(ControlMode.PercentOutput, defaultShooterBottomShooterPercentage);
     
-    //shooter.preigniterSolenoid.set(false);
+    //shooter.preigniterSolenoid.set(false);*/
   }
 
   // Called once the command ends or is interrupted.
