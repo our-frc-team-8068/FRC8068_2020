@@ -17,16 +17,20 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 //import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.commands.CmdMagazineNextShootIndex;
+import frc.robot.commands.CmdMagazinePreviousShootIndex;
 
 public class Shooter extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
   private final Joystick driverJoystick;
+  private Magazine magazine;
 
   private final WPI_VictorSPX preigniterVictorSPX = new WPI_VictorSPX(20);
   public final WPI_TalonSRX topShooterTalonSRX = new WPI_TalonSRX(21); // 21
@@ -45,46 +49,50 @@ public class Shooter extends SubsystemBase {
   //private boolean cmdEnableShooterShoot = false;
 
   private ShuffleboardTab shooterControlTab = Shuffleboard.getTab("ShooterControl"); 
+
+  private ComplexWidget ntCmdNextShootIndex;
+  private ComplexWidget ntCmdPreviousShootIndex;
+  private NetworkTableEntry ntStsAtShootPosition;
   
   private NetworkTableEntry ntScdProportionalGain = 
-    shooterControlTab.add("ScdShooterProportionalGain", 69.0).withSize(2, 1).withPosition(0, 0).getEntry();
+    shooterControlTab.add("ScdShooterProportionalGain", 69.0).withSize(1, 1).withPosition(0, 0).getEntry();
     
   private NetworkTableEntry ntScdUpdateProportionalGain = 
     shooterControlTab.add("ScdShooterUpdateProportionalGain", false)
-      .withWidget(BuiltInWidgets.kToggleButton).withSize(1, 1).withPosition(2, 0).getEntry();
+      .withWidget(BuiltInWidgets.kToggleButton).withSize(1, 1).withPosition(1, 0).getEntry();
   
   private NetworkTableEntry ntStsProportionalGain = 
-    shooterControlTab.addPersistent("StsShooterProportionalGain ", 69.0).withSize(1, 1).withPosition(3, 0).getEntry();
+    shooterControlTab.addPersistent("StsShooterProportionalGain ", 69.0).withSize(1, 1).withPosition(2, 0).getEntry();
 
     private NetworkTableEntry ntScdIntegralGain = 
-    shooterControlTab.add("ScdShooterIntegralGain", 69.0).withSize(2, 1).withPosition(0, 1).getEntry();
+    shooterControlTab.add("ScdShooterIntegralGain", 69.0).withSize(1, 1).withPosition(0, 1).getEntry();
     
   private NetworkTableEntry ntScdUpdateIntegralGain = 
     shooterControlTab.add("ScdShooterUpdateIntegralGain", false)
-      .withWidget(BuiltInWidgets.kToggleButton).withSize(1, 1).withPosition(2, 1).getEntry();
+      .withWidget(BuiltInWidgets.kToggleButton).withSize(1, 1).withPosition(1, 1).getEntry();
   
   private NetworkTableEntry ntStsIntegralGain = 
-    shooterControlTab.addPersistent("StsShooterIntegralGain ", 69.0).withSize(1, 1).withPosition(3, 1).getEntry();  
+    shooterControlTab.addPersistent("StsShooterIntegralGain ", 69.0).withSize(1, 1).withPosition(2, 1).getEntry();  
 
   private NetworkTableEntry ntScdDerivativeGain = 
-    shooterControlTab.add("ScdShooterDerivativeGain", 69.0).withSize(2, 1).withPosition(0, 2).getEntry();
+    shooterControlTab.add("ScdShooterDerivativeGain", 69.0).withSize(1, 1).withPosition(0, 2).getEntry();
     
   private NetworkTableEntry ntScdUpdateDerivativeGain = 
     shooterControlTab.add("ScdShooterUpdateDerivativeGain", false)
-      .withWidget(BuiltInWidgets.kToggleButton).withSize(1, 1).withPosition(2, 2).getEntry();
+      .withWidget(BuiltInWidgets.kToggleButton).withSize(1, 1).withPosition(1, 2).getEntry();
   
   private NetworkTableEntry ntStsDerivativeGain = 
-    shooterControlTab.addPersistent("StsShooterDerivativeGain ", 69.0).withSize(1, 1).withPosition(3, 2).getEntry();
+    shooterControlTab.addPersistent("StsShooterDerivativeGain ", 69.0).withSize(1, 1).withPosition(2, 2).getEntry();
 
   private NetworkTableEntry ntScdFeedForward =
-    shooterControlTab.add("ScdShooterFeedFoward", 69.0).withSize(2, 1).withPosition(0, 3).getEntry();
+    shooterControlTab.add("ScdShooterFeedFoward", 69.0).withSize(1, 1).withPosition(0, 3).getEntry();
 
   private NetworkTableEntry ntScdUpdateFeedFoward = 
     shooterControlTab.add("ScdShooterUpdateFeedFoward", false)
-      .withWidget(BuiltInWidgets.kToggleButton).withSize(1, 1).withPosition(2, 3).getEntry();
+      .withWidget(BuiltInWidgets.kToggleButton).withSize(1, 1).withPosition(1, 3).getEntry();
 
   private NetworkTableEntry ntStsFeedForward = 
-    shooterControlTab.addPersistent("StsShooterFeedFoward", 69.0).withSize(1, 1).withPosition(3, 3).getEntry();
+    shooterControlTab.addPersistent("StsShooterFeedFoward", 69.0).withSize(1, 1).withPosition(2, 3).getEntry();
 
   private NetworkTableEntry ntScdUpperShooterHighSpeed = 
     shooterControlTab.add("ScdShooterUpperShooterHighSpeed", 69.0).withSize(2, 1).withPosition(5, 0).getEntry();
@@ -127,13 +135,20 @@ public class Shooter extends SubsystemBase {
     shooterControlTab.addPersistent("StsShooterLowerShooterLowSpeed", 69.0).withSize(1, 1).withPosition(8, 3).getEntry();
   
   private NetworkTableEntry ntUpperTalonCurrentVelocity = 
-    shooterControlTab.addPersistent("ShooterUpperTalonCurrentVelocity", 69.0).withSize(1, 1).withPosition(9, 0).getEntry();  
+    shooterControlTab.addPersistent("ShooterUpperTalonCurrentVelocity", 69.0).withSize(1, 1).withPosition(3, 0).getEntry();  
     
   private NetworkTableEntry ntLowerTalonCurrentVelocity = 
-    shooterControlTab.addPersistent("ShooterLowerTalonCurrentVelocity", 69.0).withSize(1, 1).withPosition(9, 1).getEntry();
+    shooterControlTab.addPersistent("ShooterLowerTalonCurrentVelocity", 69.0).withSize(1, 1).withPosition(3, 1).getEntry();
     
-  public Shooter(Joystick driverJoystick) {
+  public Shooter(Joystick driverJoystick, Magazine magazine) {
     this.driverJoystick = driverJoystick;
+    this.magazine = magazine;
+
+    ntCmdNextShootIndex = shooterControlTab.add("CmdNextShootIndex", new CmdMagazineNextShootIndex(magazine))
+    .withSize(1, 1).withPosition(4, 0);
+    ntCmdPreviousShootIndex = shooterControlTab.add("CmdPreviousShootIndex", new CmdMagazinePreviousShootIndex(magazine))
+    .withSize(1, 1).withPosition(4, 1);
+    ntStsAtShootPosition = shooterControlTab.add("StsAtShootPosition", false).withSize(1, 1).withPosition(4, 2).getEntry();
 
     topShooterTalonSRX.configFactoryDefault();
     bottomShooterTalonSRX.configFactoryDefault();
@@ -163,6 +178,7 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
     ntUpperTalonCurrentVelocity.forceSetDouble(convertEncoderCountstoRpm(topShooterTalonSRX.getSelectedSensorVelocity()));
     ntLowerTalonCurrentVelocity.forceSetDouble(convertEncoderCountstoRpm(bottomShooterTalonSRX.getSelectedSensorVelocity()));
+    ntStsAtShootPosition.forceSetBoolean(magazine.isAtShootIndex());
     PIDCalibrations();
 
     //cmdEnableShooterShoot = ntEnableCmdShooterShoot.getBoolean(false);

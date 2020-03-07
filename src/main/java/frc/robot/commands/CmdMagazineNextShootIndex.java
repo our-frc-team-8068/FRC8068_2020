@@ -7,56 +7,29 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Magazine;
 
-public class CmdDefaultMagazinePosition extends CommandBase {
+public class CmdMagazineNextShootIndex extends CommandBase {
   /**
-   * Creates a new cmdPIDTest.
+   * Creates a new CmdMagazineNextShootIndex.
    */
+  Magazine magazine;
 
-private Magazine magazine;
-
-PIDController pid;
-
-double output;
-
-  public CmdDefaultMagazinePosition(Magazine magazine) {
+  public CmdMagazineNextShootIndex(Magazine magazine) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.magazine = magazine;
-
-    addRequirements(magazine);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    pid = new PIDController(magazine.getProportionalGain(), 
-        magazine.getIntegralGain(), magazine.getDerivativeGain()); 
-    pid.enableContinuousInput(0.0, 360.0);
-    pid.setTolerance(2.0);
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(pid.atSetpoint())
-    {
-      magazine.setVictorMinimumSpeed(0.0);
-    }
-    else
-    {
-      magazine.setVictorMinimumSpeed(0.05);
-    }
-    pid.setPID(magazine.getProportionalGain(), 
-        magazine.getIntegralGain(), magazine.getDerivativeGain());
-        
-    output = pid.calculate(magazine.getPositionInDegrees(), magazine.getSetpointInDegrees());
-    magazine.setSpeed(output);
-
-    System.out.println("At setpoint: " + pid.atSetpoint() + " Error: " + pid.getPositionError() + " Output : " + output);
+    magazine.nextShootIndex();
   }
 
   // Called once the command ends or is interrupted.
@@ -67,6 +40,6 @@ double output;
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

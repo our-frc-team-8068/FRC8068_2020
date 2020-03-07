@@ -42,7 +42,13 @@ public class Magazine extends SubsystemBase {
   private double stsIntegralGain;
   private double stsDerivativeGain;
   private double homedOffset = 36.0;
+  private double photoEyeOffset = -2.6;
   private boolean scdUpdatePositionSetpoint = false;
+  private double nextShootIndex = 0.0;
+  private double previousShootIndex = 0.0;
+  private double nextCollectIndex = 0.0;
+  private double previousCollectIndex = 0.0;
+  private boolean isIndexing = false;
 
   private final WPI_VictorSPX victorSPX = new WPI_VictorSPX(50);//50
   private final Encoder positionEncoder = new Encoder(Constants.DIO_MagazineEncoderBlueSignal, Constants.DIO_MagazineEncoderYellowSignal);
@@ -61,47 +67,47 @@ public class Magazine extends SubsystemBase {
   private NetworkTableEntry ntHasHomed = magazineControlTab.add("StsMagazineHasHomed", hasHomed).withSize(2, 1).withPosition(2, 0).getEntry();
 
   private NetworkTableEntry ntStsPositionSetpointDegrees = 
-    magazineControlTab.add("StsMagazineSetPointDegrees", 69.0).withSize(2, 1).withPosition(4, 1).getEntry();
+    magazineControlTab.add("StsMagazineSetPointDegrees", 69.0).withSize(2, 1).withPosition(6, 2).getEntry();
 
   private NetworkTableEntry ntScdPositionSetpointDegrees = 
-    magazineControlTab.add("ScdMagazineSetPointDegrees", 69.0).withSize(2, 1).withPosition(0, 1).getEntry();
+    magazineControlTab.add("ScdMagazineSetPointDegrees", 69.0).withSize(2, 1).withPosition(6, 0).getEntry();
 
   private NetworkTableEntry ntScdUpdatePositionSetpoint = 
     magazineControlTab.add("ScdMagazineUpdatePositionSetpoint", false)
-      .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(2, 1).getEntry();
+      .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(6, 1).getEntry();
 
   private NetworkTableEntry ntCurrentPosition =
-    magazineControlTab.add("StsMagazineCurrentPosition", 69.0).withSize(2, 1).withPosition(6, 1).getEntry();
+    magazineControlTab.add("StsMagazineCurrentPosition", 69.0).withSize(2, 1).withPosition(6, 3).getEntry();
     
   private NetworkTableEntry ntStsProportionalGain = 
-    magazineControlTab.addPersistent("StsMagazineProportionalGain ", 69.0).withSize(2, 1).withPosition(4, 2).getEntry();
+    magazineControlTab.addPersistent("StsMagazineProportionalGain ", 69.0).withSize(2, 1).withPosition(4, 1).getEntry();
 
   private NetworkTableEntry ntScdProportionalGain = 
-    magazineControlTab.add("ScdMagazineProportionalGain", 69.0).withSize(2, 1).withPosition(0, 2).getEntry();
+    magazineControlTab.add("ScdMagazineProportionalGain", 69.0).withSize(2, 1).withPosition(0, 1).getEntry();
 
   private NetworkTableEntry ntScdUpdateProportionalGain = 
     magazineControlTab.add("ScdMagazineUpdateProportionalGain", false)
-      .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(2, 2).getEntry();
+      .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(2, 1).getEntry();
 
   private NetworkTableEntry ntStsIntegralGain = 
-    magazineControlTab.addPersistent("StsMagazineIntegralGain ", 69.0).withSize(2, 1).withPosition(4, 3).getEntry();
+    magazineControlTab.addPersistent("StsMagazineIntegralGain ", 69.0).withSize(2, 1).withPosition(4, 2).getEntry();
   
   private NetworkTableEntry ntScdIntegralGain = 
-    magazineControlTab.add("ScdMagazineIntegralGain", 69.0).withSize(2, 1).withPosition(0, 3).getEntry();
+    magazineControlTab.add("ScdMagazineIntegralGain", 69.0).withSize(2, 1).withPosition(0, 2).getEntry();
   
   private NetworkTableEntry ntScdUpdateIntegralGain = 
     magazineControlTab.add("ScdMagazineUpdateIntegralGain", false)
-      .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(2, 3).getEntry();
+      .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(2, 2).getEntry();
 
   private NetworkTableEntry ntStsDerivativeGain = 
-    magazineControlTab.addPersistent("StsMagazineDerivativeGain ", 69.0).withSize(2, 1).withPosition(4, 4).getEntry();
+    magazineControlTab.addPersistent("StsMagazineDerivativeGain ", 69.0).withSize(2, 1).withPosition(4, 3).getEntry();
     
   private NetworkTableEntry ntScdDerivativeGain = 
-    magazineControlTab.add("ScdMagazineDerivativeGain", 69.0).withSize(2, 1).withPosition(0, 4).getEntry();
+    magazineControlTab.add("ScdMagazineDerivativeGain", 69.0).withSize(2, 1).withPosition(0, 3).getEntry();
     
   private NetworkTableEntry ntScdUpdateDerivativeGain = 
     magazineControlTab.add("ScdMagazineUpdateDerivativeGain", false)
-      .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(2, 4).getEntry();
+      .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(2, 3).getEntry();
 
 
   private ColorMatch colorMatcher = new ColorMatch();
@@ -169,7 +175,6 @@ public class Magazine extends SubsystemBase {
     
   public Magazine(Joystick driverJoystick) {
     this.driverJoystick = driverJoystick;
-
     getNewShuffleboardData();
 
     kRedTarget = new Color(new Color8Bit((int) (kRedTargetRedValue * 255), (int) (kRedTargetGreenValue * 255), (int) (kRedTargetBlueValue * 255)));
@@ -182,6 +187,7 @@ public class Magazine extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
     ntMagazineColorSensorCurrentRed.forceSetDouble(colorSensor.getColor().red);
     ntMagazineColorSensorCurrentGreen.forceSetDouble(colorSensor.getColor().green);
     ntMagazineColorSensorCurrentBlue.forceSetDouble(colorSensor.getColor().blue);
@@ -257,14 +263,16 @@ public class Magazine extends SubsystemBase {
 
   public void setSetpointDegrees(double degrees)
   {
-    if(!homedToShootPostion)
+    if(degrees < 0)
     {
-      setpointDegrees = degrees;
+      degrees += 360;
     }
-    else
+
+    if(degrees >= 360)
     {
-      setpointDegrees = degrees - homedOffset;
+      degrees -= 360;
     }
+    setpointDegrees = degrees;
   }
 
   /*public int convertDegreesToEncoderCounts(double degrees)
@@ -275,13 +283,19 @@ public class Magazine extends SubsystemBase {
 
   public double getPositionInDegrees()
   {
+    int rawPosition = positionEncoder.getRaw() % 8192;
+    if(positionEncoder.getRaw() < 0)
+    {
+      rawPosition += 8192;
+    }
+
     if(!homedToShootPostion)
     {
-      return (positionEncoder.getRaw() % 8192) * (360.0 / 8192);
+      return (rawPosition) * (360.0 / 8192) + photoEyeOffset;
     }
     else
     {
-      return (positionEncoder.getRaw() % 8192) * (360.0 / 8192) + homedOffset;
+      return (rawPosition) * (360.0 / 8192) + homedOffset + photoEyeOffset;
     }
   }
 
@@ -451,6 +465,166 @@ public class Magazine extends SubsystemBase {
   public void setHomedToShootPosition(boolean position)
   {
     homedToShootPostion = position;
+  }
+
+  public boolean getHomedToShootPosition()
+  {
+    return homedToShootPostion;
+  }
+
+  public boolean onTarget()
+  {
+    double upperBound = getSetpointInDegrees() + 2.0;
+    double lowerBound = getSetpointInDegrees() - 2.0;
+    if(lowerBound < 0.0)
+    {
+      lowerBound += 360.0;
+    }
+
+    if(upperBound >= 360.0)
+    {
+      upperBound -= 360.0;
+    }
+
+    if(getSetpointInDegrees() >= 358.0 || getSetpointInDegrees() < 2.0)
+    {
+      return (getSetpointInDegrees() >= 358.0 || getSetpointInDegrees() < 2.0);
+    }
+    else
+    {
+      return getPositionInDegrees() > lowerBound && getPositionInDegrees() < upperBound;
+    }
+  }
+
+  public boolean getIsIndexing()
+  {
+    return !onTarget();
+  }
+
+  public boolean isAtShootIndex()
+  {
+    return onTarget() && (getSetpointInDegrees() == 36.0 || getSetpointInDegrees() == 108.0
+      || getSetpointInDegrees() == 180.0 || getSetpointInDegrees() == 252.0 || getSetpointInDegrees() == 324.0);
+  }
+
+  public boolean isAtCollectIndex()
+  {
+    return onTarget() && (getSetpointInDegrees() == 0.0 || getSetpointInDegrees() == 72.0
+      || getSetpointInDegrees() == 144.0 || getSetpointInDegrees() == 216.0 || getSetpointInDegrees() == 288.0);
+  }
+
+  public void nextShootIndex()
+  {
+    if(getSetpointInDegrees() >= 324.0)
+    {
+      setSetpointDegrees(36.0);
+    }
+    else if(getSetpointInDegrees() >= 252.0)
+    {
+      setSetpointDegrees(324.0);
+    }
+    else if(getSetpointInDegrees() >= 180.0)
+    {
+      setSetpointDegrees(252.0);
+    }
+    else if(getSetpointInDegrees() >= 108.0)
+    {
+      setSetpointDegrees(180.0);
+    }
+    else if(getSetpointInDegrees() >= 36.0)
+    {
+      setSetpointDegrees(108.0);
+    }
+    else
+    {
+      setSetpointDegrees(36.0);
+    }
+  }
+
+  public void previousShootIndex()
+  {
+    if(getSetpointInDegrees() <= 36.0)
+    {
+      setSetpointDegrees(324.0);
+    }
+    else if(getSetpointInDegrees() <= 108.0)
+    {
+      setSetpointDegrees(36.0);
+    }
+    else if(getSetpointInDegrees() <= 180.0)
+    {
+      setSetpointDegrees(108.0);
+    }
+    else if(getSetpointInDegrees() <= 252.0)
+    {
+      setSetpointDegrees(180.0);
+    }
+    else if(getSetpointInDegrees() <= 324.0)
+    {
+      setSetpointDegrees(252.0);
+    }
+    else
+    {
+      setSetpointDegrees(324.0);
+    }
+  }
+
+  public void nextCollectIndex()
+  {
+    if(getSetpointInDegrees() >= 288.0)
+    {
+      setSetpointDegrees(0.0);
+    }
+    else if(getSetpointInDegrees() >= 216.0)
+    {
+      setSetpointDegrees(288.0);
+    }
+    else if(getSetpointInDegrees() >= 144.0)
+    {
+      setSetpointDegrees(216.0);
+    }
+    else if(getSetpointInDegrees() >= 72.0)
+    {
+      setSetpointDegrees(144.0);
+    }
+    else 
+    {
+      setSetpointDegrees(72.0);
+    }
+  }
+
+  public void previousCollectIndex()
+  {
+    if(getSetpointInDegrees() <= 0.0)
+    {
+      setSetpointDegrees(288.0);
+    }
+    else if(getSetpointInDegrees() <= 72.0)
+    {
+      setSetpointDegrees(0.0);
+    }
+    else if(getSetpointInDegrees() <= 144.0)
+    {
+      setSetpointDegrees(72.0);
+    }
+    else if(getSetpointInDegrees() <= 216.0)
+    {
+      setSetpointDegrees(144.0);
+    }
+    else if(getSetpointInDegrees() <= 288.0)
+    {
+      setSetpointDegrees(216.0);
+    }
+    else
+    {
+      setSetpointDegrees(288.0);
+    }
+  }
+
+  public void setVictorMinimumSpeed(double minimum)
+  {
+    victorSPX.configNominalOutputForward(minimum);
+    victorSPX.configNominalOutputReverse(-minimum);
   }
 }
 

@@ -52,10 +52,10 @@ public class RobotContainer {
   //Subsystems
   private final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
   private final Arm arm = new Arm(driverJoystick, operatorJoystick);
-  private final Collector collector = new Collector(driverJoystick, operatorJoystick);
-  private final DriveTrain driveTrain = new DriveTrain(driverJoystick);
   private final Magazine magazine = new Magazine(driverJoystick);
-  private final Shooter shooter = new Shooter(driverJoystick);
+  private final Collector collector = new Collector(driverJoystick, operatorJoystick, magazine);
+  private final DriveTrain driveTrain = new DriveTrain(driverJoystick);
+  private final Shooter shooter = new Shooter(driverJoystick, magazine);
   private final ControlPanel controlPanel = new ControlPanel(operatorJoystick, driveTrain);
   private final Vision vision = new Vision(driverJoystick, operatorJoystick);
 
@@ -64,7 +64,7 @@ public class RobotContainer {
   private final CmdDefaultJoystickDrive cmdDefaultJoystickDrive = new CmdDefaultJoystickDrive(driverJoystick, driveTrain);
   private final CmdDefaultMagazinePosition cmdDefaultMagazinePosition = new CmdDefaultMagazinePosition(magazine);
   private final CmdMagazineHomeEncoder cmdMagazineHomeEncoder = new CmdMagazineHomeEncoder(magazine);
-  private final CmdDefaultCollector cmdDefaultCollector = new CmdDefaultCollector(collector, driverJoystick);
+  private final CmdDefaultCollector cmdDefaultCollector = new CmdDefaultCollector(collector, driverJoystick, magazine);
   private final CmdDefaultShoot cmdDefaultShoot = new CmdDefaultShoot(shooter, driverJoystick);
   private final CmdDefaultControlPanel cmdDefaultControlPanel = new CmdDefaultControlPanel(operatorJoystick, controlPanel);
 

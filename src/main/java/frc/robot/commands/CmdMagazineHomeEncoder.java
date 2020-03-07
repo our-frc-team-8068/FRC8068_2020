@@ -51,9 +51,16 @@ public class CmdMagazineHomeEncoder extends CommandBase {
     {
       magazine.setSpeed(0.0);
       magazine.zeroEncoder();
-      magazine.setSetpointDegrees(0);
+      System.out.println("Homed to shoot: " + magazine.getHomedToShootPosition());
+      if(magazine.getHomedToShootPosition())
+      {
+        magazine.setSetpointDegrees(36.0);
+      }
+      else
+      {
+        magazine.setSetpointDegrees(0);
+      }
       magazine.setHasHomed(true);
-      System.out.println("magazine home end: " + interrupted);
     }
 
   // Returns true when the command should end.

@@ -12,19 +12,25 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.LogitechGamePad;
 import frc.robot.subsystems.Collector;
+import frc.robot.subsystems.Magazine;
 
 public class CmdDefaultCollector extends CommandBase {
   /**
    * Creates a new CmdDefaultCollect.
    */
   private final Collector collector;
+  private final Magazine magazine;
   private final Joystick driverJoystick;
 
-  private boolean firstScan = true;
+  private boolean firstScanButtonPress = true;
+  private boolean firstScanTimerOffset = true;
+  private boolean firstScanOffsetMagazine = true;
+  private boolean waitingForNextCollectPosition = true;
   private double delayTime = 0.0;
 
-  public CmdDefaultCollector(Collector collector, Joystick driverJoystick) {
+  public CmdDefaultCollector(Collector collector, Joystick driverJoystick, Magazine magazine) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.magazine = magazine;
     this.collector = collector;
     this.driverJoystick = driverJoystick;
 
@@ -41,21 +47,52 @@ public class CmdDefaultCollector extends CommandBase {
   public void execute() {
     if(driverJoystick.getRawAxis(LogitechGamePad.LEFT_TRIGGER) > 0.2)
     {
-      if(firstScan)
+      if(firstScanButtonPress)
       {
-        firstScan = false;
-        delayTime = Timer.getFPGATimestamp() + 0.5;
+        firstScanButtonPress = false;
+        magazine.nextCollectIndex();
       }
 
-      if(Timer.getFPGATimestamp() > delayTime)
+      if(magazine.onTarget())
       {
-        collector.collect(0.75);
+        if(collector.isBallPresent())
+        {
+          magazine.nextCollectIndex();
+        }
+        else
+        {
+          collector.extendCollectorCylinder();
+          if(firstScanTimerOffset)
+          {
+            firstScanTimerOffset = false;
+            delayTime = Timer.getFPGATimestamp() + 0.5;
+          }
+
+          if(Timer.getFPGATimestamp() > delayTime)
+          {
+            collector.collect(0.75);
+          }
+        }
       }
-      collector.extendCollectorCylinder();
+      
+      firstScanOffsetMagazine = true;
     }
     else
     {
-      firstScan = true;
+      if(firstScanOffsetMagazine)
+      {
+        if(magazine.onTarget() && collector.isBallPresent())
+        {
+          magazine.nextShootIndex();
+        }
+        else
+        {
+          magazine.previousShootIndex();
+        }
+        firstScanOffsetMagazine = false;
+      }
+      firstScanButtonPress = true;
+      firstScanTimerOffset = true;
       collector.collect(0.0);
       collector.retractCollectorCylinder();
     }
@@ -64,6 +101,7 @@ public class CmdDefaultCollector extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    
   }
 
   // Returns true when the command should end.

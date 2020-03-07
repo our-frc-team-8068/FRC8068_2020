@@ -15,10 +15,13 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.commands.CmdMagazineNextCollectIndex;
+import frc.robot.commands.CmdMagazinePreviousCollectIndex;
 
 public class Collector extends SubsystemBase {
   /**
@@ -27,17 +30,22 @@ public class Collector extends SubsystemBase {
 
   private final Joystick driverJoystick;
   private final Joystick operatorJoystick;
+  private final Magazine magazine;
   
   private final WPI_VictorSPX collectorVictorSPX = new WPI_VictorSPX(45);
   private final DoubleSolenoid collectorDeploymentSolenoid = new DoubleSolenoid(Constants.DIO_CollectorCylinderExtend,
     Constants.DIO_CollectorCYlinderRetract);
 
   private AnalogInput ballsensor = new AnalogInput(2);
-  private int sensorThresholdForBallPresent = 2200;
+  private int sensorThresholdForBallPresent = 1850;
 
   private double collectorSpeed;
 
   private ShuffleboardTab collectorControlTab = Shuffleboard.getTab("CollectorControl"); 
+
+  private ComplexWidget ntCmdNextCollectIndex;
+  private ComplexWidget ntCmdPreviousCollectIndex;
+  private NetworkTableEntry ntStsAtCollectPosition;
 
   private NetworkTableEntry ntStsSpeed = 
     collectorControlTab.addPersistent("StsCollectorSpeed", 69.0).withSize(2, 1).withPosition(4, 0).getEntry();
@@ -50,9 +58,17 @@ public class Collector extends SubsystemBase {
       .withWidget(BuiltInWidgets.kToggleButton).withSize(2, 1).withPosition(2, 0).getEntry();
 
 
-  public Collector(Joystick driverJoystick, Joystick operatorJoystick) {
+  public Collector(Joystick driverJoystick, Joystick operatorJoystick, Magazine magazine) {
     this.driverJoystick = driverJoystick;
     this.operatorJoystick = operatorJoystick;
+    this.magazine = magazine;
+
+    ntCmdNextCollectIndex = collectorControlTab.add("CmdNextCollectIndex", new CmdMagazineNextCollectIndex(magazine))
+    .withSize(2, 1).withPosition(0, 1);
+    ntCmdPreviousCollectIndex = collectorControlTab.add("CmdPreviousCollectIndex", new CmdMagazinePreviousCollectIndex(magazine))
+    .withSize(2, 1).withPosition(2, 1);
+    ntStsAtCollectPosition = collectorControlTab.add("StsAtCollectPosition", false).withSize(1, 1).withPosition(4, 1).getEntry();
+
     collectorSpeed = ntStsSpeed.getDouble(69.0);
   }
   @Override
@@ -65,8 +81,7 @@ public class Collector extends SubsystemBase {
       ntScdUpdateSpeed.setBoolean(false);
     }
 
-    System.out.println("Collector sensor: " + isBallPresent());
-
+    ntStsAtCollectPosition.forceSetBoolean(magazine.isAtCollectIndex());
   }
 
   public void collect(double speed)
