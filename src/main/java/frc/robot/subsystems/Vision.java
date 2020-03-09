@@ -11,13 +11,13 @@ import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoMode;
 import edu.wpi.cscore.VideoSink;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.LogitechGamePad;
 import frc.robot.LogitechJoystick;
 
 public class Vision extends SubsystemBase {
@@ -36,25 +36,35 @@ public class Vision extends SubsystemBase {
 
   private boolean switchCameras = false;
 
+  NetworkTable networkTable;
+  double[] width;
+  double[] centerX;
+  double[] defaultArray = new double[0];
+
   public Vision(Joystick driverJoystick, Joystick operatorJoystick) {
     this.driverJoystick = driverJoystick;
     this.operatorJoystick = operatorJoystick;
     shootCamera = CameraServer.getInstance().startAutomaticCapture("Shooter Camera", 0);
     //shootCamera.setVideoMode(VideoMode.PixelFormat.kMJPEG, 176, 144, 30);
     shootCamera.setVideoMode(shootVideoMode);
+    shootCamera.setExposureManual(0);
     //shootCamera.setResolution(320, 240);
     //shootCamera.setFPS(15);
     controlPanelCamera = CameraServer.getInstance().startAutomaticCapture("Control Panel Camera", 1);
     //controlPanelCamera.setVideoMode(VideoMode.PixelFormat.kMJPEG, 320, 240, 15);
     controlPanelCamera.setResolution(320, 240);
     controlPanelCamera.setFPS(15);
+    controlPanelCamera.setExposureManual(0);
 
     server = CameraServer.getInstance().getServer();
     
     cameraSelection = NetworkTableInstance.getDefault().getTable("CameraPublisher").getEntry(
       "USB Camera 1"); 
 
-    driverInformationCenterTab.add(server.getSource());    
+    driverInformationCenterTab.add(server.getSource());   
+    
+    networkTable = NetworkTableInstance.getDefault().getTable("GRIP/mycontoursReport");
+
   }
 
   @Override
@@ -72,6 +82,16 @@ public class Vision extends SubsystemBase {
     else
     {
       server.setSource(shootCamera); 
+    }
+
+    double[] centerX = networkTable.getEntry("centerX").getDoubleArray(defaultArray);
+    double[] width = networkTable.getEntry("width").getDoubleArray(defaultArray);
+    try
+    {
+      System.out.println("centerX: " + centerX[0] + " width: " + width[0]);
+    }
+    catch (Exception e) {
+      System.out.println("no contours");
     }
   }
 }
