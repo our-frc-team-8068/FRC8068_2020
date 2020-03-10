@@ -42,7 +42,6 @@ public class Magazine extends SubsystemBase {
   private double stsProportionalGain;
   private double stsIntegralGain;
   private double stsDerivativeGain;
-  private double homedOffset = 36.0;
   private double photoEyeOffset = -2.6;
   private boolean scdUpdatePositionSetpoint = false;
   private double nextShootIndex = 0.0;
@@ -299,7 +298,7 @@ public class Magazine extends SubsystemBase {
     }
     else
     {
-      return (rawPosition) * (360.0 / 8192) + homedOffset + photoEyeOffset;
+      return (rawPosition) * (360.0 / 8192) + photoEyeOffset;
     }
   }
 
