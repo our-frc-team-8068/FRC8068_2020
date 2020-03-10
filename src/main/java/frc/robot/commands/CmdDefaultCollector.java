@@ -71,7 +71,7 @@ public class CmdDefaultCollector extends CommandBase {
 
           if(Timer.getFPGATimestamp() > delayTime)
           {
-            collector.collect(0.75, 0.8);
+            collector.collect(0.75, 0.6);
           }
         }
       }

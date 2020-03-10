@@ -76,7 +76,7 @@ public class CmdDefaultShoot extends CommandBase {
         shooter.setPreigniterSpeed(0.5);
         if(firstScanTimer)
         {
-          shooterDelayTime = Timer.getFPGATimestamp() + 0.5;
+          shooterDelayTime = Timer.getFPGATimestamp() + 0.25;
           firstScanTimer = false;
         }
 
