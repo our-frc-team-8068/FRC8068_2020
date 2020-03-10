@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.LogitechGamePad;
 import frc.robot.subsystems.Collector;
 import frc.robot.subsystems.Magazine;
+import frc.robot.subsystems.Shooter;
 
 public class CmdDefaultCollector extends CommandBase {
   /**
@@ -51,7 +52,7 @@ public class CmdDefaultCollector extends CommandBase {
       {
         firstScanButtonPress = false;
         magazine.nextCollectIndex();
-      }
+      }      
 
       if(magazine.onTarget())
       {

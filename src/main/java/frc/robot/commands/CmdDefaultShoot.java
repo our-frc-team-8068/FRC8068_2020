@@ -64,7 +64,7 @@ public class CmdDefaultShoot extends CommandBase {
     {
       if(firstScanButtonPress)
       {
-        magazine.nextShootIndex();
+        //magazine.nextShootIndex();
         shooter.retractPreignitor();
         firstScanTimer = true;
         firstScanButtonPress = false;
@@ -95,7 +95,7 @@ public class CmdDefaultShoot extends CommandBase {
       if(magazine.onTarget() && Timer.getFPGATimestamp() > shooterDelayTime)
       {
         shooter.retractPreignitor();
-        magazine.nextShootIndex();
+        //magazine.nextShootIndex();
         firstScanTimer = true;
       }
       
@@ -104,7 +104,7 @@ public class CmdDefaultShoot extends CommandBase {
     {
       shooter.topShooterTalonSRX.set(ControlMode.PercentOutput, 0.0);
       shooter.bottomShooterTalonSRX.set(ControlMode.PercentOutput, 0.0);
-      shooter.extendPreignitor();
+      shooter.retractPreignitor();
       shooter.setPreigniterSpeed(0.0);
     }
 

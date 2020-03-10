@@ -181,6 +181,9 @@ public class Shooter extends SubsystemBase {
     ntStsAtShootPosition.forceSetBoolean(magazine.isAtShootIndex());
     PIDCalibrations();
 
+    
+    
+
     //cmdEnableShooterShoot = ntEnableCmdShooterShoot.getBoolean(false);
   
   }

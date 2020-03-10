@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
@@ -174,6 +175,7 @@ public class Magazine extends SubsystemBase {
   private NetworkTableEntry ntMagazineColorSensorCurrentBlue = magazineColorTab.add("MagazineColorSensorCurrentBlue", 69.0).withSize(2, 1).withPosition(6, 0).getEntry();
     
   public Magazine(Joystick driverJoystick) {
+
     this.driverJoystick = driverJoystick;
     getNewShuffleboardData();
 
@@ -182,6 +184,8 @@ public class Magazine extends SubsystemBase {
     kLexanTarget = new Color(new Color8Bit((int) (kLexanTargetRedValue * 255), (int) (kLexanTargetGreenValue * 255), (int) (kLexanTargetBlueValue * 255)));
 
     updateColorMatcher();
+    victorSPX.configClosedLoopPeakOutput(0, 0.8);
+    victorSPX.setNeutralMode(NeutralMode.Brake);
   }
 
   @Override
@@ -501,13 +505,13 @@ public class Magazine extends SubsystemBase {
     return !onTarget();
   }
 
-  public boolean isAtShootIndex()
+  public boolean isAtCollectIndex()
   {
     return onTarget() && (getSetpointInDegrees() == 36.0 || getSetpointInDegrees() == 108.0
       || getSetpointInDegrees() == 180.0 || getSetpointInDegrees() == 252.0 || getSetpointInDegrees() == 324.0);
   }
 
-  public boolean isAtCollectIndex()
+  public boolean isAtShootIndex()
   {
     return onTarget() && (getSetpointInDegrees() == 0.0 || getSetpointInDegrees() == 72.0
       || getSetpointInDegrees() == 144.0 || getSetpointInDegrees() == 216.0 || getSetpointInDegrees() == 288.0);
