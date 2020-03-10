@@ -73,12 +73,6 @@ public class CmdMagazineHomeEncoder extends CommandBase {
         magazine.setHomedToShootPosition(true);
         return true;
       }
-      else if(magazine.colorIsYellow())
-      {
-        System.out.println("Yellow");
-        magazine.setHomedToShootPosition(false);
-        return true;
-      }
       else
       {
         return false;

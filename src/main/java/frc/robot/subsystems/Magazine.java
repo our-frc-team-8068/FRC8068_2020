@@ -41,7 +41,6 @@ public class Magazine extends SubsystemBase {
   private double stsProportionalGain;
   private double stsIntegralGain;
   private double stsDerivativeGain;
-  private double homedOffset = 36.0;
   private double photoEyeOffset = -2.6;
   private boolean scdUpdatePositionSetpoint = false;
   private double nextShootIndex = 0.0;
@@ -295,7 +294,7 @@ public class Magazine extends SubsystemBase {
     }
     else
     {
-      return (rawPosition) * (360.0 / 8192) + homedOffset + photoEyeOffset;
+      return (rawPosition) * (360.0 / 8192) + photoEyeOffset;
     }
   }
 
@@ -501,13 +500,13 @@ public class Magazine extends SubsystemBase {
     return !onTarget();
   }
 
-  public boolean isAtShootIndex()
+  public boolean isAtCollectIndex()
   {
     return onTarget() && (getSetpointInDegrees() == 36.0 || getSetpointInDegrees() == 108.0
       || getSetpointInDegrees() == 180.0 || getSetpointInDegrees() == 252.0 || getSetpointInDegrees() == 324.0);
   }
 
-  public boolean isAtCollectIndex()
+  public boolean isAtShootIndex()
   {
     return onTarget() && (getSetpointInDegrees() == 0.0 || getSetpointInDegrees() == 72.0
       || getSetpointInDegrees() == 144.0 || getSetpointInDegrees() == 216.0 || getSetpointInDegrees() == 288.0);
