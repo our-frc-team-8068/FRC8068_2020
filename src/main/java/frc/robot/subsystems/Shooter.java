@@ -181,7 +181,7 @@ public class Shooter extends SubsystemBase {
     ntStsAtShootPosition.forceSetBoolean(magazine.isAtShootIndex());
     PIDCalibrations();
 
-    
+
     
 
     //cmdEnableShooterShoot = ntEnableCmdShooterShoot.getBoolean(false);
@@ -195,10 +195,10 @@ public class Shooter extends SubsystemBase {
     stsDerivativeGain = ntStsDerivativeGain.getDouble(69.0);
     stsFeedForward = ntStsFeedForward.getDouble(69.0);
 
-    stsShooterUpperShooterHighSpeed = ntScdUpperShooterHighSpeed.getDouble(69.0);
-    stsShooterLowerShooterHighSpeed = ntScdLowerShooterHighSpeed.getDouble(69.0);
-    stsShooterUpperShooterLowSpeed = ntScdUpperShooterLowSpeed.getDouble(69.0);
-    stsShooterLowerShooterLowSpeed = ntScdLowerShooterLowSpeed.getDouble(69.0);
+    stsShooterUpperShooterHighSpeed = ntStsUpperShooterHighSpeed.getDouble(5700.0);
+    stsShooterLowerShooterHighSpeed = ntStsLowerShooterHighSpeed.getDouble(5700.0);
+    stsShooterUpperShooterLowSpeed = ntStsUpperShooterLowSpeed.getDouble(5700.0);
+    stsShooterLowerShooterLowSpeed = ntStsLowerShooterLowSpeed.getDouble(5700.0);
   }
 
   public void PIDCalibrations()
@@ -316,5 +316,30 @@ public class Shooter extends SubsystemBase {
     public void retractPreignitor()
     {
       preigniterSolenoid.set(Value.kReverse);
+    }
+
+    public boolean onTarget()
+    {
+      double upperBoundUpperShooter = 100 + stsShooterUpperShooterHighSpeed;
+      double lowerBoundUpperShooter = stsShooterUpperShooterHighSpeed - 100;
+      double upperBoundLowerShooter = 100 + stsShooterLowerShooterHighSpeed;
+      double lowerBoundLowerShooter = stsShooterLowerShooterHighSpeed - 100;
+      if(convertEncoderCountstoRpm(topShooterTalonSRX.getSelectedSensorVelocity()) > lowerBoundUpperShooter 
+          && convertEncoderCountstoRpm(topShooterTalonSRX.getSelectedSensorVelocity()) < upperBoundUpperShooter)
+      {
+        if(convertEncoderCountstoRpm(bottomShooterTalonSRX.getSelectedSensorVelocity()) > lowerBoundLowerShooter 
+          && convertEncoderCountstoRpm(bottomShooterTalonSRX.getSelectedSensorVelocity()) < upperBoundLowerShooter)
+          {
+            return true;
+          }
+          else
+          {
+            return false;
+          }
+      }
+      else
+      {
+        return false;
+      }
     }
 }

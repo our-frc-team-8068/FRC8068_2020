@@ -54,7 +54,7 @@ public class Vision extends SubsystemBase {
     cameraSelection = NetworkTableInstance.getDefault().getTable("CameraPublisher").getEntry(
       "USB Camera 1"); 
 
-    driverInformationCenterTab.add(server.getSource());    
+    driverInformationCenterTab.add(server.getSource()).withPosition(0, 0).withSize(4, 4);    
   }
 
   @Override

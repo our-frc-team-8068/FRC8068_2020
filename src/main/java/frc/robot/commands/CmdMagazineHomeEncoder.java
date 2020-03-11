@@ -54,7 +54,7 @@ public class CmdMagazineHomeEncoder extends CommandBase {
       System.out.println("Homed to shoot: " + magazine.getHomedToShootPosition());
       if(magazine.getHomedToShootPosition())
       {
-        magazine.setSetpointDegrees(36.0);
+        magazine.setSetpointDegrees(0.0);
       }
       else
       {

@@ -183,8 +183,8 @@ public class Magazine extends SubsystemBase {
     kLexanTarget = new Color(new Color8Bit((int) (kLexanTargetRedValue * 255), (int) (kLexanTargetGreenValue * 255), (int) (kLexanTargetBlueValue * 255)));
 
     updateColorMatcher();
-    victorSPX.configClosedLoopPeakOutput(0, 0.8);
-    victorSPX.setNeutralMode(NeutralMode.Brake);
+    victorSPX.configClosedLoopPeakOutput(0, 0.6);
+    victorSPX.setNeutralMode(NeutralMode.Coast);
   }
 
   @Override
@@ -202,10 +202,6 @@ public class Magazine extends SubsystemBase {
     ntCurrentPosition.forceSetDouble(getPositionInDegrees());
     //System.out.println("Current Position: " + positionEncoder.getRaw());
 
-    if(driverJoystick.getRawButtonPressed(LogitechGamePad.BUTTON_A))
-    {
-      setSetpointDegrees(180);
-    }
 
     scdPositionSetPointDegrees = ntScdPositionSetpointDegrees.getDouble(0);
 
@@ -516,7 +512,7 @@ public class Magazine extends SubsystemBase {
       || getSetpointInDegrees() == 144.0 || getSetpointInDegrees() == 216.0 || getSetpointInDegrees() == 288.0);
   }
 
-  public void nextShootIndex()
+  public void nextCollectIndex()
   {
     if(getSetpointInDegrees() >= 324.0)
     {
@@ -544,7 +540,7 @@ public class Magazine extends SubsystemBase {
     }
   }
 
-  public void previousShootIndex()
+  public void previousCollectIndex()
   {
     if(getSetpointInDegrees() <= 36.0)
     {
@@ -572,7 +568,7 @@ public class Magazine extends SubsystemBase {
     }
   }
 
-  public void nextCollectIndex()
+  public void nextShootIndex()
   {
     if(getSetpointInDegrees() >= 288.0)
     {
@@ -596,7 +592,7 @@ public class Magazine extends SubsystemBase {
     }
   }
 
-  public void previousCollectIndex()
+  public void previousShootIndex()
   {
     if(getSetpointInDegrees() <= 0.0)
     {

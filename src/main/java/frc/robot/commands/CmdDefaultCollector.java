@@ -59,7 +59,6 @@ public class CmdDefaultCollector extends CommandBase {
         if(collector.isBallPresent())
         {
           magazine.nextCollectIndex();
-          System.out.println("Ball at : " + magazine.getPositionInDegrees());
         }
         else
         {

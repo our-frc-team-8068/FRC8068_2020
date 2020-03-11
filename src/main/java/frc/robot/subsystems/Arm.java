@@ -35,6 +35,9 @@ public class Arm extends SubsystemBase {
 
     leftWinchVictorSPX.configFactoryDefault();
     leftWinchVictorSPX.setInverted(true);
+
+    rotationVictorSPX.configFactoryDefault();
+    rotationVictorSPX.setInverted(true);
     
 
   }
@@ -42,5 +45,16 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public void setArmSpeed(double speed)
+  {
+    rotationVictorSPX.set(speed);
+  }
+
+  public void setWinchSpeed(double speed)
+  {
+    leftWinchVictorSPX.set(speed);
+    rightWinchVictorSPX.set(speed);
   }
 }

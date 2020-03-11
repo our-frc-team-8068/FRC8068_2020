@@ -37,7 +37,7 @@ public class CmdDefaultShoot extends CommandBase {
 
   double bottomShooterSpeed;
   double topShooterSpeed;
-  double shooterDelayTime;
+  double shooterDelayTime = 900000;
 
   boolean firstScanButtonPress = true;
   boolean firstScanTimer;
@@ -62,6 +62,8 @@ public class CmdDefaultShoot extends CommandBase {
   public void execute() {
     if(driverJoystick.getRawAxis(LogitechGamePad.RIGHT_TRIGGER) > 0)
     {
+      shooter.setPreigniterSpeed(0.2);
+
       if(firstScanButtonPress)
       {
         //magazine.nextShootIndex();
@@ -72,13 +74,17 @@ public class CmdDefaultShoot extends CommandBase {
       
       if(magazine.onTarget())
       {
-        shooter.extendPreignitor();
-        shooter.setPreigniterSpeed(0.5);
-        if(firstScanTimer)
+        if(shooter.onTarget())
         {
-          shooterDelayTime = Timer.getFPGATimestamp() + 0.25;
-          firstScanTimer = false;
+          shooter.extendPreignitor();
+
+          if(firstScanTimer)
+          {
+            shooterDelayTime = Timer.getFPGATimestamp() + 0.25;
+            firstScanTimer = false;
+          }
         }
+        
 
         if(driverJoystick.getRawAxis(LogitechGamePad.RIGHT_TRIGGER) >= shootHighTriggerPosition)
         {
@@ -95,7 +101,7 @@ public class CmdDefaultShoot extends CommandBase {
       if(magazine.onTarget() && Timer.getFPGATimestamp() > shooterDelayTime)
       {
         shooter.retractPreignitor();
-        //magazine.nextShootIndex();
+        magazine.nextShootIndex();
         firstScanTimer = true;
       }
       

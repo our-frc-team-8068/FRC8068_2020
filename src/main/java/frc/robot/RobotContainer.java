@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.CmdArmDeploy;
 import frc.robot.commands.CmdDefaultCollector;
 import frc.robot.commands.CmdDefaultControlPanel;
 import frc.robot.commands.CmdDefaultJoystickDrive;
@@ -66,7 +67,7 @@ public class RobotContainer {
   private final CmdDefaultCollector cmdDefaultCollector = new CmdDefaultCollector(collector, driverJoystick, magazine);
   private final CmdDefaultShoot cmdDefaultShoot = new CmdDefaultShoot(shooter, magazine, driverJoystick);
   private final CmdDefaultControlPanel cmdDefaultControlPanel = new CmdDefaultControlPanel(operatorJoystick, controlPanel);
-
+  private final CmdArmDeploy cmdArmDeploy = new CmdArmDeploy(arm, driverJoystick, operatorJoystick);
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
@@ -79,6 +80,7 @@ public class RobotContainer {
     collector.setDefaultCommand(cmdDefaultCollector);
     shooter.setDefaultCommand(cmdDefaultShoot);
     controlPanel.setDefaultCommand(cmdDefaultControlPanel);
+    arm.setDefaultCommand(cmdArmDeploy);
 
     //m_driveTrain.setDefaultCommand(new CmdDefaultJoystickDrive(m_driverJoystick, m_driveTrain));
 
